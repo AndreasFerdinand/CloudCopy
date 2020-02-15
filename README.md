@@ -1,9 +1,12 @@
-# CloudCopy - Upload Files to SAP C4C from Commandline
-
+# CloudCopy - A command-line tool to manage attachments in SAP Cloud for Customer
 
 > ATTENTION: Software is in an early development stage!
 
-Upload a the file `details.pdf` to Contact 1000000:
+![Alt text](./asciinema/CloudCopy.upload.svg)
+
+## Examples
+
+Upload the file `details.pdf` to Contact 1000000:
 ```
 CloudCopy upload details.pdf h.maulwurf@my000000.crm.ondemand.com:Contact:#1000000
 ```
