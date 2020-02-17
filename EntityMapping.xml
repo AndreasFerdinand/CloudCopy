@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CloudCopyEntityMapping>
+	<Entity Name="Appointment" HumanReadableIdentifier="ID" />
+	<Entity Name="CodTimeReport" HumanReadableIdentifier="ID" />
+	<Entity Name="CompetitorProduct" HumanReadableIdentifier="CompetitorProductID" />
+	<Entity Name="Contact" HumanReadableIdentifier="ContactID" />
+	<Entity Name="Contract" HumanReadableIdentifier="ID" />
+	<Entity Name="CorporateAccount" HumanReadableIdentifier="AccountID" />
+	<Entity Name="CustomerOrder" HumanReadableIdentifier="ID" />
+	<Entity Name="CustomerOrderItem" HumanReadableIdentifier="ID" />
+	<Entity Name="IndividualCustomer" HumanReadableIdentifier="CustomerID" />
+	<Entity Name="InstallationPoint" HumanReadableIdentifier="ID" />
+	<Entity Name="JobDefinition" HumanReadableIdentifier="JobID" />
+	<Entity Name="Lead" HumanReadableIdentifier="ID" />
+	<Entity Name="LeanInvoice" HumanReadableIdentifier="ID" />
+	<Entity Name="MemoActivity" HumanReadableIdentifier="ID" />
+	<Entity Name="Opportunity" HumanReadableIdentifier="ID" />
+	<Entity Name="OpportunityItem" HumanReadableIdentifier="ID" />
+	<Entity Name="Payment" HumanReadableIdentifier="ID" />
+	<Entity Name="PhoneCall" HumanReadableIdentifier="ID" />
+	<Entity Name="Product" HumanReadableIdentifier="ProductID" />
+	<Entity Name="Promotion" HumanReadableIdentifier="ID" />
+	<Entity Name="RegisteredProduct" HumanReadableIdentifier="ID" />
+	<Entity Name="SalesQuote" HumanReadableIdentifier="ID" />
+	<Entity Name="SalesQuoteItem" HumanReadableIdentifier="ItemID" />
+	<Entity Name="ServiceAgent" HumanReadableIdentifier="ServiceAgentID" />
+	<Entity Name="ServiceRequest" HumanReadableIdentifier="ID" />
+	<Entity Name="SocialMediaActivity" HumanReadableIdentifier="ID" />
+	<Entity Name="Tasks" HumanReadableIdentifier="ID" />
+</CloudCopyEntityMapping>
+
