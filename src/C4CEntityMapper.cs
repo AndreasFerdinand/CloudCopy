@@ -31,9 +31,9 @@ namespace CloudCopy
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(EntityMappingStream);
 
-            XmlNode EntiryNode = xmlDoc.SelectSingleNode("/CloudCopyEntityMapping/Entity[@Name='" + _EntityName + "']");
+            XmlNode EntityNode = xmlDoc.SelectSingleNode("/CloudCopyEntityMapping/Entity[@Name='" + _EntityName + "']");
 
-            string HumanReadableIdentifier = EntiryNode.Attributes["HumanReadableIdentifier"].Value;
+            string HumanReadableIdentifier = EntityNode.Attributes["HumanReadableIdentifier"].Value;
 
             return HumanReadableIdentifier;
 
