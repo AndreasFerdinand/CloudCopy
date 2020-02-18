@@ -35,8 +35,6 @@ namespace CloudCopy
 
             string HumanReadableIdentifier = EntiryNode.Attributes["HumanReadableIdentifier"].Value;
 
-            System.Console.WriteLine(HumanReadableIdentifier);
-
             return HumanReadableIdentifier;
 
         }
