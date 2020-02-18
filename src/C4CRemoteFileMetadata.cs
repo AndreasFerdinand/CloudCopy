@@ -66,8 +66,8 @@ namespace CloudCopy
             Console.WriteLine("Remote Filename: " + Filename);
             Console.WriteLine("UUID: " + UUID);
             Console.WriteLine("MimeType: " + MimeType);
-            Console.WriteLine("Metadata URI: " + ReplaceHost(MetadataURI.ToString(),"myXXXXXX.crm.ondemand.com"));
-            Console.WriteLine("Download URI: " + ReplaceHost(DownloadURI.ToString(),"myXXXXXX.crm.ondemand.com"));
+            Console.WriteLine("Metadata URI: " + MetadataURI.ToString());
+            Console.WriteLine("Download URI: " + DownloadURI.ToString());
         }
 
         string ReplaceHost(string original, string newHostName) {
