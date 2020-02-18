@@ -1,4 +1,7 @@
 
+using System.IO;
+using System.Xml;
+
 namespace CloudCopy
 {
     class C4CEntityMapper : IC4CEntityMapper
@@ -22,17 +25,20 @@ namespace CloudCopy
 
         public string getHumanReadableIDName()
         {
-            //toDo;
-            if ( _EntityName == "Contact" )
-            {
-                return "ContactID";
-            }
-            if ( _EntityName == "Product" )
-            {
-                return "ProductID";
-            }
 
-            return "ID";
+            Stream EntityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CloudCopy.EntityMapping.xml");
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(EntityMappingStream);
+
+            XmlNode EntiryNode = xmlDoc.SelectSingleNode("/CloudCopyEntityMapping/Entity[@Name='" + _EntityName + "']");
+
+            string HumanReadableIdentifier = EntiryNode.Attributes["HumanReadableIdentifier"].Value;
+
+            System.Console.WriteLine(HumanReadableIdentifier);
+
+            return HumanReadableIdentifier;
+
         }
     }
 }
