@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.ComponentModel;
+using System.IO;
 
 namespace CloudCopy
 {
@@ -298,52 +299,15 @@ namespace CloudCopy
 
         private static void printUsage()
         {
-            Console.WriteLine("SYNOPSIS");
-            Console.WriteLine("  CloudCopy <command> [options] [parameter]");
-            Console.WriteLine("");
-            Console.WriteLine("DESCRIPTION");
-            Console.WriteLine("  CloudCopy copies files between SAP C4C and the local host. It uses the OData Service (https) of the remote host.");
-            Console.WriteLine("");
-            Console.WriteLine("  Uploading files:");
-            Console.WriteLine("    CloudCopy upload [options] <sourcefile> ... [user@host:]<TargetEntityName>:{<UUID>|#<ID>}");
-            Console.WriteLine("");
-            Console.WriteLine("    Options:");
-            Console.WriteLine("    -s\tSilent");
-            Console.WriteLine("");
-            Console.WriteLine("  Listing files:");
-            Console.WriteLine("    CloudCopy list [options] [user@host:]<TargetEntityName>:{<UUID>|#<ID>}");
-            Console.WriteLine("");
-            Console.WriteLine("    Options:");
-            Console.WriteLine("    -X\tsort by file extension");
-            Console.WriteLine("    -M\tsort by MimeType");
-            Console.WriteLine("    -U\tsort by UUID");
-            Console.WriteLine("    -r\tsort in reversed order");
-            Console.WriteLine("");
-            Console.WriteLine("    -P <pattern>\tfilter using a pattern with the wildcards * and ?");
-            Console.WriteLine("    -R <regex>\t\tfilter using a regular expression");
-            Console.WriteLine("");
-            Console.WriteLine("  General:");
-            Console.WriteLine("    If user and host are not provided as argument, it must be specified in the user specific configuration file.");
-            Console.WriteLine("    Configuration file for the current user: " + ConfigFileHandler.getDefaultConfigFilePath() );
-            Console.WriteLine("");
-            Console.WriteLine("  ATTENTION:");
-            Console.WriteLine("    Please be advised that the credentials for the remote service are stored as plain text (unencrypted).");
-            Console.WriteLine("    Therefore this method is not recommended. Set at least appropriate file permissions.");
-            Console.WriteLine("");
-            Console.WriteLine("EXAMPLES");
-            Console.WriteLine("  CloudCopy upload Document.pdf hans@my123456.crm.ondemand.com:ServiceRequest:bb11aa2b4ffdd7744cc2734aa33c6be");
-            Console.WriteLine("  CloudCopy upload * ServiceRequest:#1234");
-            Console.WriteLine("  CloudCopy list Contact:#1234");
-            Console.WriteLine("");
-            Console.WriteLine("STATUS CODE");
-            Console.WriteLine("  CloudCopy returns 0 on success, and >0 otherwise.");
-            Console.WriteLine("");
-            Console.WriteLine("LICENSE");
-            Console.WriteLine("  CloudCopy is licensed under the MIT License.");
-            Console.WriteLine("");
-            Console.WriteLine("AUTHORS");
-            Console.WriteLine("  Andreas Ferdinand Kasper (froeschler.net@gmail.com)");
+            Stream EntityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CloudCopy.Help");
+            
+            StreamReader reader = new StreamReader(EntityMappingStream);
 
+            String helpText = reader.ReadToEnd();
+
+            helpText = helpText.Replace( "~~CONFIGFILE~~",ConfigFileHandler.getDefaultConfigFilePath());
+
+            Console.Write(helpText);
         }
 
     }

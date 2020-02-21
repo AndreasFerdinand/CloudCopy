@@ -1,0 +1,45 @@
+SYNOPSIS
+  CloudCopy <command> [options] [parameter]
+
+DESCRIPTION
+  CloudCopy copies files between SAP C4C and the local host. It uses the OData Service (https) of the remote host.
+
+  Uploading files:
+    CloudCopy upload [options] <sourcefile> ... [user@host:]<TargetEntityName>:{<UUID>|#<ID>}
+
+    Options:
+    -s	Silent
+
+  Listing files:
+    CloudCopy list [options] [user@host:]<TargetEntityName>:{<UUID>|#<ID>}
+
+    Options:
+    -X	sort by file extension
+    -M	sort by MimeType
+    -U	sort by UUID
+    -r	sort in reversed order
+
+    -P <pattern>	filter using a pattern with the wildcards * and ?
+    -R <regex>		filter using a regular expression
+
+  General:
+    If user and host are not provided as argument, it must be specified in the user specific configuration file.
+    Configuration file for the current user: ~~CONFIGFILE~~
+
+  ATTENTION:
+    Please be advised that the credentials for the remote service are stored as plain text (unencrypted).
+    Therefore this method is not recommended. Set at least appropriate file permissions.
+
+EXAMPLES
+  CloudCopy upload Document.pdf hans@my123456.crm.ondemand.com:ServiceRequest:bb11aa2b4ffdd7744cc2734aa33c6be
+  CloudCopy upload * ServiceRequest:#1234
+  CloudCopy list Contact:#1234
+
+STATUS CODE
+  CloudCopy returns 0 on success, and >0 otherwise.
+
+LICENSE
+  CloudCopy is licensed under the MIT License.
+
+AUTHORS
+  Andreas Ferdinand Kasper (froeschler.net@gmail.com)
