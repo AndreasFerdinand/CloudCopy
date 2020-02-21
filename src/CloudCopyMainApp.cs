@@ -51,8 +51,18 @@ namespace CloudCopy
 
             IOutputOptions outputOptions = new OutputOptions();
 
+            string FilterPattern = "";
+            bool FilterByWildcard = false;
+            bool FilterByRegex = false;
+
             foreach (var element in OptionsAndParameter)
             {
+                if ( (FilterByWildcard || FilterByRegex ) && FilterPattern == "" )
+                {
+                    FilterPattern = element;
+                    continue;
+                }
+
                 if (element == "-r") //reverse sort order
                 {
                     outputOptions.sortDirection = ListSortDirection.Descending;
@@ -77,6 +87,16 @@ namespace CloudCopy
                     continue;
                 }
 
+                if (element == "-P") //pattern
+                {
+                    FilterByWildcard = true;
+                }
+
+                if (element == "-R" ) //REGEX
+                {
+                    FilterByRegex = true;
+                }
+
             }
 
             Client = createCloudClient(targetDescription);
@@ -97,9 +117,19 @@ namespace CloudCopy
                 Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier);
             }
 
-            var GetFileListingAsyncTask = Client.GetFileListingAsync(Directory2Read);
+            IRemoteFileListing fileListing = Client.GetFileListingAsync(Directory2Read).Result;
 
-            GetFileListingAsyncTask.Result.listFiles(outputOptions);
+            if ( FilterByWildcard )
+            {
+                fileListing.removeNotMatchingWildcard( FilterPattern );
+            }
+
+            if ( FilterByRegex )
+            {
+                fileListing.removeNotMatchingRegex( FilterPattern );
+            }
+
+            fileListing.listFiles(outputOptions);
 
         }
 
@@ -275,13 +305,13 @@ namespace CloudCopy
             Console.WriteLine("  CloudCopy copies files between SAP C4C and the local host. It uses the OData Service (https) of the remote host.");
             Console.WriteLine("");
             Console.WriteLine("  Uploading files:");
-            Console.WriteLine("  CloudCopy upload [options] <sourcefile> ... [user@host:]<TargetEntityName>:{<UUID>|#<ID>}");
+            Console.WriteLine("    CloudCopy upload [options] <sourcefile> ... [user@host:]<TargetEntityName>:{<UUID>|#<ID>}");
             Console.WriteLine("");
             Console.WriteLine("    Options:");
             Console.WriteLine("    -s\tSilent");
             Console.WriteLine("");
             Console.WriteLine("  Listing files:");
-            Console.WriteLine("  CloudCopy list [user@host:]<TargetEntityName>:{<UUID>|#<ID>}");
+            Console.WriteLine("    CloudCopy list [options] [user@host:]<TargetEntityName>:{<UUID>|#<ID>}");
             Console.WriteLine("");
             Console.WriteLine("    Options:");
             Console.WriteLine("    -X\tsort by file extension");
@@ -289,11 +319,16 @@ namespace CloudCopy
             Console.WriteLine("    -U\tsort by UUID");
             Console.WriteLine("    -r\tsort in reversed order");
             Console.WriteLine("");
+            Console.WriteLine("    -P <pattern>\tfilter using a pattern with the wildcards * and ?");
+            Console.WriteLine("    -R <regex>\t\tfilter using a regular expression");
+            Console.WriteLine("");
             Console.WriteLine("  General:");
-            Console.WriteLine("  If user and host are not provided as argument, it must be specified in the user specific configuration file.");
-            Console.WriteLine("  Configuration file for the current user: " + ConfigFileHandler.getDefaultConfigFilePath() );
-            Console.WriteLine("  ATTENTION: Please be advised that the credentials for the remote service are stored as plain text (unencrypted).");
-            Console.WriteLine("             Therefore this method is not recommended. Set at least appropriate file permissions.");
+            Console.WriteLine("    If user and host are not provided as argument, it must be specified in the user specific configuration file.");
+            Console.WriteLine("    Configuration file for the current user: " + ConfigFileHandler.getDefaultConfigFilePath() );
+            Console.WriteLine("");
+            Console.WriteLine("  ATTENTION:");
+            Console.WriteLine("    Please be advised that the credentials for the remote service are stored as plain text (unencrypted).");
+            Console.WriteLine("    Therefore this method is not recommended. Set at least appropriate file permissions.");
             Console.WriteLine("");
             Console.WriteLine("EXAMPLES");
             Console.WriteLine("  CloudCopy upload Document.pdf hans@my123456.crm.ondemand.com:ServiceRequest:bb11aa2b4ffdd7744cc2734aa33c6be");

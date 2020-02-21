@@ -4,6 +4,7 @@ using System.Xml;
 using System.Linq;
 using System.IO;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace CloudCopy
 {
@@ -137,6 +138,22 @@ namespace CloudCopy
             }
 
 
+        }
+
+        public void removeNotMatchingRegex(string pattern)
+        {
+            _RemoteFileMetadata = _RemoteFileMetadata.Where( x => Regex.IsMatch(x.Filename,pattern) ).ToList();
+        }
+
+        public void removeNotMatchingWildcard(string pattern)
+        {
+            //see https://stackoverflow.com/questions/30299671/matching-strings-with-wildcard
+
+            string regexpattern;
+
+            regexpattern = "^" + Regex.Escape(pattern).Replace("\\?", ".").Replace("\\*", ".*") + "$"; 
+
+            removeNotMatchingRegex(regexpattern);
         }
     }
 }
