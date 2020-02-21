@@ -1,7 +1,5 @@
 # CloudCopy - A command-line tool to manage attachments in SAP Cloud for Customer
 
-> ATTENTION: Software is in an early development stage!
-
 ![Alt text](./asciinema/CloudCopy.upload.svg)
 
 ## Examples
