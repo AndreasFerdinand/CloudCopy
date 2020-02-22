@@ -1,0 +1,2 @@
+#!/bin/bash
+svg-term --in CloudCopy.upload.cast --out CloudCopy.upload.svg --window --width 101 --height 20
