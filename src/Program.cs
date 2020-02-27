@@ -20,8 +20,7 @@ namespace CloudCopy
             catch (Exception ex)
             {
                 TextWriter errorWriter = Console.Error;
-                errorWriter.WriteLine("The following exception occured during execution of the program:");
-                errorWriter.WriteLine(ex.ToString());
+                errorWriter.WriteLine(ex.Message);
 
                 return 1;
             }
