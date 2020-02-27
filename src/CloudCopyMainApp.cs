@@ -17,7 +17,11 @@ namespace CloudCopy
         {
             _args = args;
 
-            if ( _args.Length > 0 && ( _args[0] == "--help" || _args[0] == "help" ) )
+            if ( _args.Length == 0 )
+            {
+                throw new Exception("Unknown command or options provided.");
+            }
+            else if ( _args.Length > 0 && ( _args[0] == "--help" || _args[0] == "help" ) )
             {
                 printUsage();
             }
