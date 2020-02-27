@@ -31,21 +31,26 @@ namespace CloudCopy
 
         private void LoadData()
         {
-            //Directory.CreateDirectory(Path.GetDirectoryName(Filename));
+            try
+            {
+                XmlDocument xmlDoc = new XmlDocument();
+                xmlDoc.Load(Filename);
 
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(Filename);
+                XmlElement root = xmlDoc.DocumentElement;
 
-            XmlElement root = xmlDoc.DocumentElement;
+                XmlNode Node = root.SelectSingleNode("Hostname");
+                Hostname = Node.InnerText;
 
-            XmlNode Node = root.SelectSingleNode("Hostname");
-            Hostname = Node.InnerText;
+                Node = root.SelectSingleNode("Username");
+                Username = Node.InnerText;
 
-            Node = root.SelectSingleNode("Username");
-            Username = Node.InnerText;
-
-            Node = root.SelectSingleNode("Password");
-            Password = Node.InnerText;
+                Node = root.SelectSingleNode("Password");
+                Password = Node.InnerText;
+            }
+            catch ( Exception ex )
+            {
+                throw new Exception("Cannot read credential file " + Filename);
+            } 
         }
 
         public ConfigFileHandler(string filename)
