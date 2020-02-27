@@ -31,6 +31,13 @@ namespace CloudCopy
 
             var ResponseMessage = await _HttpClient.GetAsync(_HttpClient.BaseAddress.ToString() + Source.getSubPath() + query);
 
+            if ( !ResponseMessage.IsSuccessStatusCode )
+            {
+                int StatusCode = (int)ResponseMessage.StatusCode;
+
+                throw new Exception("The remote host returned the status code " + StatusCode.ToString() + " " + ResponseMessage.ReasonPhrase);
+            }
+
             var content = await ResponseMessage.Content.ReadAsStringAsync();
 
             C4CRemoteFileListing FileListing = new C4CRemoteFileListing(content);
@@ -56,6 +63,13 @@ namespace CloudCopy
 
             var ResponseMessage = await _HttpClient.SendAsync(request);
 
+            if ( !ResponseMessage.IsSuccessStatusCode )
+            {
+                int StatusCode = (int)ResponseMessage.StatusCode;
+
+                throw new Exception("The remote host returned the status code " + StatusCode.ToString() + " " + ResponseMessage.ReasonPhrase);
+            }
+
             var content = await ResponseMessage.Content.ReadAsStringAsync();
 
 
@@ -71,7 +85,7 @@ namespace CloudCopy
 
             if ( string.IsNullOrEmpty(MetadataUri))
             {
-                throw new NotImplementedException();
+                throw new Exception("Location-header not provided by remote host.");
             }
 
             //read back file metadata
@@ -109,7 +123,9 @@ namespace CloudCopy
 
                 if ( !ResponseMessage.IsSuccessStatusCode )
                 {
-                    throw new NotImplementedException();
+                    int StatusCode = (int)ResponseMessage.StatusCode;
+
+                    throw new Exception("The remote host returned the status code " + StatusCode.ToString() + " " + ResponseMessage.ReasonPhrase);
                 }
 
                 HttpHeaders headers = ResponseMessage.Headers;
@@ -124,7 +140,7 @@ namespace CloudCopy
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    throw new Exception("x-csrf-token-header not provided by remote host.");
                 }
             }
             finally
