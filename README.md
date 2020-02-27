@@ -14,10 +14,53 @@ List all attached files of Contact 1000000:
 CloudCopy list h.maulwurf@my000000.crm.ondemand.com:Contact:#1000000
 ```
 
+The following examples require a configuration file, containing the target host and the credentials to authenticate the user.
+
+Upload all files of the current directory to ServiceRequest 2:
+```
+CloudCopy upload * ServiceRequest:#2
+```
+
 List all attached files of a ServiceRequest using the UUID of the Request:
 ```
 CloudCopy list ServiceRequest:a563df71571140899b17ed8d08d8ff4b
 ```
+
+Only list PDF files of ServiceRequest 2:
+```
+CloudCopy list -P "*.jpg" ServiceRequest:#4
+```
+
+## Supported Entities
+Currently the following entities are allowed as target:
+
+* Appointment
+* CodTimeReport
+* CompetitorProduct
+* Contact
+* Contract
+* CorporateAccount
+* CustomerOrder
+* CustomerOrderItem
+* IndividualCustomer
+* InstallationPoint
+* JobDefinition
+* Lead
+* LeanInvoice
+* MemoActivity
+* Opportunity
+* OpportunityItem
+* Payment
+* PhoneCall
+* Product
+* Promotion
+* RegisteredProduct
+* SalesQuote
+* SalesQuoteItem
+* ServiceAgent
+* ServiceRequest
+* SocialMediaActivity
+* Tasks
 
 ## Configuration File
 To prevent entering the credentials and the host each time, the data can be provided through a user specific configuration file.
