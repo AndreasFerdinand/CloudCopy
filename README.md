@@ -26,7 +26,7 @@ List all attached files of a ServiceRequest using the UUID of the Request:
 CloudCopy list ServiceRequest:a563df71571140899b17ed8d08d8ff4b
 ```
 
-Only list PDF files of ServiceRequest 2:
+Only list jpg files of ServiceRequest 2:
 ```
 CloudCopy list -P "*.jpg" ServiceRequest:#4
 ```
