@@ -31,6 +31,18 @@ Only list jpg files of ServiceRequest 2:
 CloudCopy list -P "*.jpg" ServiceRequest:#4
 ```
 
+## Installing
+### Linux
+To install (the current development pre-release) CloudCopy use, the folloing commands. To run it, use `./CloudCopy`.
+
+```bash
+$ mkdir CloudCopy && cd CloudCopy
+$ curl -LsS https://github.com/AndreasFerdinand/CloudCopy/releases/download/v0.1-alpha/CloudCopy-linux-x64.tar.gz | tar xzv
+```
+
+### Windows
+Just download and extract the file `CloudCopy-win-x64.zip` from the the release-page and use the executable `CloudCopy.exe`.
+
 ## Supported Entities
 Currently the following entities are allowed as target:
 
