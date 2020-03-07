@@ -33,7 +33,7 @@ CloudCopy list -P "*.jpg" ServiceRequest:#4
 
 ## Installing
 ### Linux
-To install (the current development pre-release) CloudCopy use, the folloing commands. To run it, use `./CloudCopy`.
+To install (the current development pre-release) CloudCopy use, the following commands. To run it, use `./CloudCopy`.
 
 ```bash
 $ mkdir CloudCopy && cd CloudCopy
@@ -89,7 +89,7 @@ C:\Users\<user>\AppData\Local\CloudCopy\default.xml
 ```
 
 ### Format
-It is not recommended to use the file, since the credentials are stored unencrypted in the file. At least be sure, to prevent other users to access the file by setting appropriate file permissions.
+It is not recommended to use the file, since the credentials are stored unencrypted in it. At least be sure, to prevent other users to access the file by setting appropriate file permissions.
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <CloudCopy>
