@@ -17,10 +17,22 @@ namespace CloudCopy
 
         static SemaphoreSlim _SemaphoreSlim = new SemaphoreSlim(1,1);
 
-        public async Task<object> DownloadFileAsync(IRemoteResource Source, ILocalResource Target)
+        public async Task DownloadFileAsync(IRemoteFileMetadata Source, ILocalResource Target)
         {
             await fetchCsrfTokenAsync();
-            throw new NotImplementedException();
+
+            var responseMessage = await _HttpClient.GetAsync(Source.DownloadURI);
+
+            if ( responseMessage.IsSuccessStatusCode )
+            {
+                await Target.writeNewFile(responseMessage.Content);
+            }
+            else
+            {
+                int StatusCode = (int)responseMessage.StatusCode;
+
+                throw new Exception("The remote host returned the status code " + StatusCode.ToString() + " " + responseMessage.ReasonPhrase);
+            }
         }
 
         public async Task<C4CRemoteFileListing> GetFileListingAsync(IRemoteResource Source)

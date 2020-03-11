@@ -1,4 +1,6 @@
 using System;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace CloudCopy
 {
@@ -6,6 +8,10 @@ namespace CloudCopy
     {
         public string getBase64SourceString();
         public string getFileName();
+
+        public string getPath();
+
+        public Task writeNewFile(HttpContent content);
     }
 
 

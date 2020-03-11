@@ -5,10 +5,11 @@ using System.Linq;
 using System.IO;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace CloudCopy
 {
-    class C4CRemoteFileListing : IRemoteFileListing
+    class C4CRemoteFileListing : IRemoteFileListing<C4CRemoteFileMetadata>
     {
         List<C4CRemoteFileMetadata> _RemoteFileMetadata = new List<C4CRemoteFileMetadata>();
 
@@ -54,6 +55,19 @@ namespace CloudCopy
 
                 _RemoteFileMetadata.Add(CurrentFile);
             }
+        }
+
+        public IEnumerator<C4CRemoteFileMetadata> GetEnumerator()
+        {
+            for ( int i = 0; i < _RemoteFileMetadata.Count; i++ )
+            {
+                yield return _RemoteFileMetadata[i];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         public void listFiles()
@@ -155,5 +169,7 @@ namespace CloudCopy
 
             removeNotMatchingRegex(regexpattern);
         }
+
+
     }
 }

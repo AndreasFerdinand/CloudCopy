@@ -33,6 +33,10 @@ namespace CloudCopy
             {
                 list();
             }
+            else if ( _args[0] == "download" && _args.Length > 1 )
+            {
+                download();
+            }
             else
             {
                 throw new Exception("Unknown command or options provided.");
@@ -122,7 +126,7 @@ namespace CloudCopy
                 Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier);
             }
 
-            IRemoteFileListing fileListing = Client.GetFileListingAsync(Directory2Read).Result;
+            var fileListing = Client.GetFileListingAsync(Directory2Read).Result;
 
             if ( FilterByWildcard )
             {
@@ -135,6 +139,84 @@ namespace CloudCopy
             }
 
             fileListing.listFiles(outputOptions);
+
+        }
+
+        private void download()
+        {
+            C4CHttpClient Client;
+            List<string> OptionsAndParameter = new List<string>(_args);
+
+            IRemoteResource Directory2Read;
+
+            string FilterPattern = "";
+            bool FilterByWildcard = false;
+            bool FilterByRegex = false;
+
+            string TargetArg = OptionsAndParameter[OptionsAndParameter.Count - 1];
+
+            OptionsAndParameter.RemoveAt(OptionsAndParameter.Count - 1); //Remove Target
+            OptionsAndParameter.RemoveAt(0); // Remove "download"
+
+            TargetDescription targetDescription = parseTargetDescription(TargetArg);
+
+            foreach (var element in OptionsAndParameter)
+            {
+                if ( (FilterByWildcard || FilterByRegex ) && FilterPattern == "" )
+                {
+                    FilterPattern = element;
+                    continue;
+                }
+
+                if (element == "-P") //pattern
+                {
+                    FilterByWildcard = true;
+                }
+
+                if (element == "-R" ) //REGEX
+                {
+                    FilterByRegex = true;
+                }
+
+            }
+
+            
+            Client = createCloudClient(targetDescription);
+
+            if (targetDescription.Collection == "" || targetDescription.Identifier == "")
+            {
+                throw new Exception("Target collection or identifier not set.");
+            }
+
+            if (targetDescription.Identifier[0] == '#')
+            {
+                Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),Client);
+            }
+            else
+            {
+                Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier);
+            }
+
+            var fileListing = Client.GetFileListingAsync(Directory2Read).Result;
+
+            if ( FilterByWildcard )
+            {
+                fileListing.removeNotMatchingWildcard( FilterPattern );
+            }
+
+            if ( FilterByRegex )
+            {
+                fileListing.removeNotMatchingRegex( FilterPattern );
+            }
+
+            foreach( var fileMetadata in fileListing )
+            {
+                if ( fileMetadata.DownloadURI != null ) //Links cannot be downloaded and dont have a DownloadURI set
+                {
+                    var DownloadTask = Client.DownloadFileAsync(fileMetadata,new FileSystemResource(fileMetadata.Filename));
+                    DownloadTask.Wait();
+                }
+            }
 
         }
 
@@ -194,7 +276,7 @@ namespace CloudCopy
 
             foreach (string FilePath in Files2Upload)
             {
-                var UploadTask = Client.UploadFileAsync(new FileSystemSource(FilePath), Target);
+                var UploadTask = Client.UploadFileAsync(new FileSystemResource(FilePath), Target);
 
                 if (!_SilentOptionSet)
                 {

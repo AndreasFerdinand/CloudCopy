@@ -7,7 +7,7 @@ namespace CloudCopy
     interface IClient
     {
         public Task<IRemoteFileMetadata> UploadFileAsync(ILocalResource Source, IRemoteResource Target);
-        public Task<object> DownloadFileAsync(IRemoteResource Source, ILocalResource Target);
+        public Task DownloadFileAsync(IRemoteFileMetadata Source, ILocalResource Target);
 
     }
 }
