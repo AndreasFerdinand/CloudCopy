@@ -1,8 +1,10 @@
 # CloudCopy - A command-line tool to manage attachments in SAP Cloud for Customer
 
+Tired of manually uploading a bunch of files to your service request in C4C? Or do you just need to download all files, attached to a Contact? Try CloudCopy, it’s your swiss army knife for managing attachments in SAP Cloud 4 Customer. Watch the screencast, to see, how CloudCopy can help you to improve your service process. 
+
 ![Alt text](./asciinema/CloudCopy.upload.svg)
 
-## Examples
+## Some more Examples
 
 Upload the file `details.pdf` to Contact 1000000:
 ```
@@ -29,6 +31,16 @@ CloudCopy list ServiceRequest:a563df71571140899b17ed8d08d8ff4b
 Only list jpg files of ServiceRequest 2:
 ```
 CloudCopy list -P "*.jpg" ServiceRequest:#4
+```
+
+Download all pdf files of Contact 2000000:
+```
+CloudCopy download -P "*.jpg" Contact:#2000000
+```
+
+Download all files of ServiceRequest 333:
+```
+CloudCopy download ServiceRequest:#333
 ```
 
 ## Installing
