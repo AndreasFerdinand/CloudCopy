@@ -22,6 +22,12 @@ DESCRIPTION
     -P <pattern>	filter using a pattern with the wildcards * and ?
     -R <regex>		filter using a regular expression
 
+  Downloading files:
+    CloudCopy download [options] [user@host:]<TargetEntityName>:{<UUID>|#<ID>}
+
+    -P <pattern>	filter using a pattern with the wildcards * and ?
+    -R <regex>		filter using a regular expression
+
   General:
     If user and host are not provided as argument, it must be specified in the user specific configuration file.
     Configuration file for the current user: ~~CONFIGFILE~~
@@ -34,6 +40,8 @@ EXAMPLES
   CloudCopy upload Document.pdf hans@my123456.crm.ondemand.com:ServiceRequest:bb11aa2b4ffdd7744cc2734aa33c6be
   CloudCopy upload * ServiceRequest:#1234
   CloudCopy list Contact:#1234
+  CloudCopy download ServiceRequest:#44
+  CloudCopy download -P "ErrorDescription.pdf" ServiceRequest:#22
 
 STATUS CODE
   CloudCopy returns 0 on success, and >0 otherwise.
