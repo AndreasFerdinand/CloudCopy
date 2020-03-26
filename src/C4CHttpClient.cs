@@ -85,7 +85,7 @@ namespace CloudCopy
             var content = await ResponseMessage.Content.ReadAsStringAsync();
 
 
-            //we send a second request to read the metadate of the newly uploaded file
+            //we send a second request to read the metadata of the newly uploaded file
             HttpHeaders headers = ResponseMessage.Headers;
             IEnumerable<string> values;
             string MetadataUri = "";
