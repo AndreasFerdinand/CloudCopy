@@ -49,7 +49,7 @@ To install CloudCopy (latest development release) use, the following commands. T
 
 ```bash
 $ mkdir CloudCopy && cd CloudCopy
-$ curl -LsS https://github.com/AndreasFerdinand/CloudCopy/releases/download/v0.2-alpha/CloudCopy-linux-v0.2-alpha-x64.tar.gz | tar xzv
+$ curl -LsS https://github.com/AndreasFerdinand/CloudCopy/releases/download/v0.2-alpha/CloudCopy-linux-v0.2-alpha.x64.tar.gz | tar xzv
 ```
 
 ### Windows
