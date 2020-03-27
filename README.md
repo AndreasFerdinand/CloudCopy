@@ -45,15 +45,15 @@ CloudCopy download ServiceRequest:#333
 
 ## Installing
 ### Linux
-To install (the current development pre-release) CloudCopy use, the following commands. To run it, use `./CloudCopy`.
+To install CloudCopy (latest development release) use, the following commands. To run it, use `./CloudCopy`.
 
 ```bash
 $ mkdir CloudCopy && cd CloudCopy
-$ curl -LsS https://github.com/AndreasFerdinand/CloudCopy/releases/download/v0.1-alpha/CloudCopy-linux-x64.tar.gz | tar xzv
+$ curl -LsS https://github.com/AndreasFerdinand/CloudCopy/releases/download/v0.2-alpha/CloudCopy-linux-v0.2-alpha-x64.tar.gz | tar xzv
 ```
 
 ### Windows
-Just download and extract the file `CloudCopy-win-x64.zip` from the the release-page and use the executable `CloudCopy.exe`.
+Just download and extract the file `CloudCopy-win-<version>.x64.zip` from the the release-page and use the executable `CloudCopy.exe`.
 
 ## Supported Entities
 Currently the following entities are allowed as target:
