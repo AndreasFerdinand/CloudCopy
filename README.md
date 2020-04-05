@@ -35,7 +35,7 @@ CloudCopy list -P "*.jpg" ServiceRequest:#4
 
 Download all pdf files of Contact 2000000:
 ```
-CloudCopy download -P "*.jpg" Contact:#2000000
+CloudCopy download -P "*.pdf" Contact:#2000000
 ```
 
 Download all files of ServiceRequest 333:
