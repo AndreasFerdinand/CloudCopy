@@ -170,6 +170,9 @@ namespace CloudCopy
             removeNotMatchingRegex(regexpattern);
         }
 
-
+        public void removeEmptyURIs()
+        {
+            _RemoteFileMetadata = _RemoteFileMetadata.Where( x => x.DownloadURI != null ).ToList();
+        }
     }
 }

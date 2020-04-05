@@ -153,6 +153,9 @@ namespace CloudCopy
             bool FilterByWildcard = false;
             bool FilterByRegex = false;
 
+            bool OverrideDefaultParallelism = false;
+            int MaxParallelism = 4;
+
             string TargetArg = OptionsAndParameter[OptionsAndParameter.Count - 1];
 
             OptionsAndParameter.RemoveAt(OptionsAndParameter.Count - 1); //Remove Target
@@ -168,6 +171,12 @@ namespace CloudCopy
                     continue;
                 }
 
+                if ( OverrideDefaultParallelism )
+                {
+                    MaxParallelism = int.Parse(element);
+                    OverrideDefaultParallelism = false;
+                }
+
                 if (element == "-P") //pattern
                 {
                     FilterByWildcard = true;
@@ -176,6 +185,11 @@ namespace CloudCopy
                 if (element == "-R" ) //REGEX
                 {
                     FilterByRegex = true;
+                }
+
+                if (element == "-T") //Max number of download threads
+                {
+                    OverrideDefaultParallelism = true;
                 }
 
             }
@@ -209,15 +223,16 @@ namespace CloudCopy
                 fileListing.removeNotMatchingRegex( FilterPattern );
             }
 
-            foreach( var fileMetadata in fileListing )
+            //Links cannot be downloaded and dont have a DownloadURI set
+            fileListing.removeEmptyURIs();
+
+            Parallel.ForEach(fileListing, new ParallelOptions {MaxDegreeOfParallelism = MaxParallelism},
+            fileMetadata =>
             {
-                if ( fileMetadata.DownloadURI != null ) //Links cannot be downloaded and dont have a DownloadURI set
-                {
                     var DownloadTask = Client.DownloadFileAsync(fileMetadata,new FileSystemResource(fileMetadata.Filename));
                     DownloadTask.Wait();
-                }
-            }
-
+                    Console.WriteLine(fileMetadata.Filename);
+            });
         }
 
         private void upload()

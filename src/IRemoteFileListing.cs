@@ -10,5 +10,6 @@ namespace CloudCopy
 
         void removeNotMatchingWildcard(string pattern);
         void removeNotMatchingRegex(string pattern);
+        void removeEmptyURIs();
     }
 }

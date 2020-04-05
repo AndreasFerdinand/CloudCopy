@@ -25,8 +25,9 @@ DESCRIPTION
   Downloading files:
     CloudCopy download [options] [user@host:]<TargetEntityName>:{<UUID>|#<ID>}
 
-    -P <pattern>	filter using a pattern with the wildcards * and ?
-    -R <regex>		filter using a regular expression
+    -P <pattern>  filter using a pattern with the wildcards * and ?
+    -R <regex>    filter using a regular expression
+    -T <count>    max number of parallel download threads (default 4)
 
   General:
     If user and host are not provided as argument, it must be specified in the user specific configuration file.
