@@ -43,6 +43,11 @@ Download all files of ServiceRequest 333:
 CloudCopy download ServiceRequest:#333
 ```
 
+To set a product image you have to provide the TypeCode 10011 using option `-C`:
+```
+CloudCopy upload -C 10011 product.png Product:#10000483
+```
+
 ## Installing
 ### Linux
 To install CloudCopy (latest development release) use, the following commands. To run it, use `./CloudCopy`.
