@@ -81,7 +81,7 @@ namespace CloudCopy
                 request.Headers.Add("Accept", "application/xml");
                 request.Headers.Add("odata-no-response-payload","true");
 
-                string requestcontent = "{\"TypeCode\": \"10001\",\"Name\": \"" + Source.getFileName() + "\",\"CategoryCode\": \"2\",\"Binary\": \"" + Source.getBase64SourceString() + "\"}";
+                string requestcontent = "{\"TypeCode\": \"" + Target.TypeCode + "\",\"Name\": \"" + Source.getFileName() + "\",\"CategoryCode\": \"2\",\"Binary\": \"" + Source.getBase64SourceString() + "\"}";
 
                 request.Content = new StringContent(requestcontent,Encoding.UTF8, "application/json");
 

@@ -9,6 +9,7 @@ DESCRIPTION
 
     Options:
     -s	Silent
+    -C  Set Attachment TypeCode (default 10001)
 
   Listing files:
     CloudCopy list [options] [user@host:]<TargetEntityName>:{<UUID>|#<ID>}

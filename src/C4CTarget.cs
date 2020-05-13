@@ -7,10 +7,13 @@ namespace CloudCopy
     {
         string _EntityObjectID;
         string _EntityID;
+        string _TypeCode = "10001";
 
         IC4CEntityMapper _C4CEntityMapper;
 
         IC4CQueryClient _QueryClient;
+
+        public string TypeCode { get => _TypeCode; set => _TypeCode = value; }
 
         public void setC4CEntityMapper(IC4CEntityMapper c4cEntityMapper)
         {

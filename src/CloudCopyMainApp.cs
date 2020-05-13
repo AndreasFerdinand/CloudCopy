@@ -284,6 +284,9 @@ namespace CloudCopy
             IRemoteResource Target;
             C4CHttpClient Client;
 
+            bool overrideDefaultTypeCode = false;
+            string TypeCode = "10001";
+
             List<string> OptionsAndParameter = new List<string>(_args);
 
             string TargetArg = OptionsAndParameter[OptionsAndParameter.Count - 1];
@@ -299,11 +302,22 @@ namespace CloudCopy
 
             foreach (var element in OptionsAndParameter)
             {
+                if ( overrideDefaultTypeCode )
+                {
+                    TypeCode = element;
+                    overrideDefaultTypeCode = false;
+                }
+
                 if (element == "-s")
                 {
                     _SilentOptionSet = true;
 
                     continue;
+                }
+
+                if (element == "-C")
+                {
+                    overrideDefaultTypeCode = true;
                 }
 
                 Files2Upload.AddRange(getFiles(element));
@@ -325,12 +339,12 @@ namespace CloudCopy
             if (targetDescription.Identifier[0] == '#')
             {
                 //Target = new C4CTarget(targetDescription.Collection, targetDescription.Identifier.Substring(1), "ServiceRequestAttachmentFolder", Client);
-                Target = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),Client);
+                Target = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),Client, TypeCode);
             }
             else
             {
                 //Target = new C4CTarget(targetDescription.Collection, targetDescription.Identifier, "ServiceRequestAttachmentFolder");
-                Target = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier);
+                Target = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier, TypeCode);
             }
 
             foreach (string FilePath in Files2Upload)
