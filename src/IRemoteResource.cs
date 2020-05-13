@@ -1,11 +1,11 @@
 using System;
-
+using System.Threading.Tasks;
 
 namespace CloudCopy
 {
     interface IRemoteResource
     {
-        public string getSubPath();
+        public Task<string> getSubPathAsync();
 
     }
 

@@ -19,35 +19,40 @@ namespace CloudCopy
 
         public async Task DownloadFileAsync(IRemoteFileMetadata Source, ILocalResource Target)
         {
-            await fetchCsrfTokenAsync();
+            //await fetchCsrfTokenAsync();
 
-            var responseMessage = await _HttpClient.GetAsync(Source.DownloadURI);
-
-            if ( responseMessage.IsSuccessStatusCode )
+            try
             {
+                var responseMessage = await _HttpClient.GetAsync(Source.DownloadURI);
+
+                responseMessage.EnsureSuccessStatusCode( );
+
                 await Target.writeNewFile(responseMessage.Content);
             }
-            else
+            catch (Exception ex)
             {
-                int StatusCode = (int)responseMessage.StatusCode;
-
-                throw new Exception("The remote host returned the status code " + StatusCode.ToString() + " " + responseMessage.ReasonPhrase);
+                throw new C4CClientException("An error occured while downloading file.",ex);
             }
         }
 
         public async Task<C4CRemoteFileListing> GetFileListingAsync(IRemoteResource Source)
         {
-            await fetchCsrfTokenAsync();
+            //await fetchCsrfTokenAsync();
+            HttpResponseMessage ResponseMessage;
 
             string query = "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode&$orderby=Name";
 
-            var ResponseMessage = await _HttpClient.GetAsync(_HttpClient.BaseAddress.ToString() + Source.getSubPath() + query);
+            string SourceSubPath = await Source.getSubPathAsync();
 
-            if ( !ResponseMessage.IsSuccessStatusCode )
+            try
             {
-                int StatusCode = (int)ResponseMessage.StatusCode;
+                ResponseMessage = await _HttpClient.GetAsync(_HttpClient.BaseAddress.ToString() + SourceSubPath + query);
 
-                throw new Exception("The remote host returned the status code " + StatusCode.ToString() + " " + ResponseMessage.ReasonPhrase);
+                ResponseMessage.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                throw new C4CClientException("Error occured while receiving file listing",ex);
             }
 
             var content = await ResponseMessage.Content.ReadAsStringAsync();
@@ -61,29 +66,35 @@ namespace CloudCopy
         {
             await fetchCsrfTokenAsync();
 
-            var request = new HttpRequestMessage();
+            HttpResponseMessage ResponseMessage;
+            string content;
 
-            request.RequestUri = new Uri(_HttpClient.BaseAddress.ToString() + Target.getSubPath());
-            request.Method = System.Net.Http.HttpMethod.Post;
-            request.Headers.Add("x-csrf-token", _CSRFToken);
-            request.Headers.Add("Accept", "application/xml");
-            request.Headers.Add("odata-no-response-payload","true");
+            var SubPath = await Target.getSubPathAsync();
 
-            string requestcontent = "{\"TypeCode\": \"10001\",\"Name\": \"" + Source.getFileName() + "\",\"CategoryCode\": \"2\",\"Binary\": \"" + Source.getBase64SourceString() + "\"}";
-
-            request.Content = new StringContent(requestcontent,Encoding.UTF8, "application/json");
-
-            var ResponseMessage = await _HttpClient.SendAsync(request);
-
-            if ( !ResponseMessage.IsSuccessStatusCode )
+            try
             {
-                int StatusCode = (int)ResponseMessage.StatusCode;
+                var request = new HttpRequestMessage();
 
-                throw new Exception("The remote host returned the status code " + StatusCode.ToString() + " " + ResponseMessage.ReasonPhrase);
+                request.RequestUri = new Uri(_HttpClient.BaseAddress.ToString() + SubPath);
+                request.Method = System.Net.Http.HttpMethod.Post;
+                request.Headers.Add("x-csrf-token", _CSRFToken);
+                request.Headers.Add("Accept", "application/xml");
+                request.Headers.Add("odata-no-response-payload","true");
+
+                string requestcontent = "{\"TypeCode\": \"10001\",\"Name\": \"" + Source.getFileName() + "\",\"CategoryCode\": \"2\",\"Binary\": \"" + Source.getBase64SourceString() + "\"}";
+
+                request.Content = new StringContent(requestcontent,Encoding.UTF8, "application/json");
+
+                ResponseMessage = await _HttpClient.SendAsync(request);
+
+                ResponseMessage.EnsureSuccessStatusCode();
+
+                content = await ResponseMessage.Content.ReadAsStringAsync();
             }
-
-            var content = await ResponseMessage.Content.ReadAsStringAsync();
-
+            catch (Exception ex)
+            {
+                throw new C4CClientException("Error occured while uploading file",ex);
+            }
 
             //we send a second request to read the metadata of the newly uploaded file
             HttpHeaders headers = ResponseMessage.Headers;
@@ -97,7 +108,7 @@ namespace CloudCopy
 
             if ( string.IsNullOrEmpty(MetadataUri))
             {
-                throw new Exception("Location-header not provided by remote host.");
+                throw new C4CClientException("Location-header not provided by remote host");
             }
 
             //read back file metadata
@@ -108,7 +119,6 @@ namespace CloudCopy
 
             C4CRemoteFileMetadata Metadata = new C4CRemoteFileMetadata(content);
 
-
             return Metadata;
         }
 
@@ -116,8 +126,8 @@ namespace CloudCopy
         {
             await _SemaphoreSlim.WaitAsync();
 
-            //Console.Write("Semaphore.WaitAsync()");
-            
+            HttpResponseMessage ResponseMessage;
+
             try
             {
                 if ( !string.IsNullOrEmpty( _CSRFToken ) )
@@ -125,20 +135,22 @@ namespace CloudCopy
                     return _CSRFToken;
                 }
 
-                var request = new HttpRequestMessage();
-                request.Method = System.Net.Http.HttpMethod.Get;
-                request.Headers.Add("x-csrf-token", "fetch");
-                request.Headers.Add("Accept", "application/json");
-                
-
-                var ResponseMessage = await _HttpClient.SendAsync(request);
-
-                if ( !ResponseMessage.IsSuccessStatusCode )
+                try
                 {
-                    int StatusCode = (int)ResponseMessage.StatusCode;
+                    var request = new HttpRequestMessage();
+                    request.Method = System.Net.Http.HttpMethod.Get;
+                    request.Headers.Add("x-csrf-token", "fetch");
+                    request.Headers.Add("Accept", "application/json");
+                    
+                    ResponseMessage = await _HttpClient.SendAsync(request);
 
-                    throw new Exception("The remote host returned the status code " + StatusCode.ToString() + " " + ResponseMessage.ReasonPhrase);
+                    ResponseMessage.EnsureSuccessStatusCode();
                 }
+                catch (Exception ex)
+                {
+                    throw new C4CClientException("An error occured during CSRF-Token request",ex);
+                }
+
 
                 HttpHeaders headers = ResponseMessage.Headers;
                 
@@ -152,7 +164,7 @@ namespace CloudCopy
                 }
                 else
                 {
-                    throw new Exception("x-csrf-token-header not provided by remote host.");
+                    throw new C4CClientException("x-csrf-token-header not provided by remote host");
                 }
             }
             finally
@@ -168,18 +180,27 @@ namespace CloudCopy
 
         public async Task<string> getObjectIDFromID(string CollectionName, string ID, string humanReadableIDName)
         {
-            var request = new HttpRequestMessage();
-            
-            request.Method = System.Net.Http.HttpMethod.Get;
-            request.RequestUri = new Uri(_HttpClient.BaseAddress.ToString() + CollectionName + "?$filter=" + humanReadableIDName + " eq '" + ID + "'&$select=ObjectID");
+            HttpResponseMessage ResponseMessage;
 
-            request.Headers.Add("Accept", "application/xml");
+            try
+            {
+                var request = new HttpRequestMessage();
+                
+                request.Method = System.Net.Http.HttpMethod.Get;
+                request.RequestUri = new Uri(_HttpClient.BaseAddress.ToString() + CollectionName + "?$filter=" + humanReadableIDName + " eq '" + ID + "'&$select=ObjectID");
 
-            var ResponseMessage = await _HttpClient.SendAsync(request);
+                request.Headers.Add("Accept", "application/xml");
+
+                ResponseMessage = await _HttpClient.SendAsync(request);
+
+                ResponseMessage.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                throw new C4CClientException("An error occured while requesting Object ID from User-friendly ID",ex);
+            }
 
             var content = await ResponseMessage.Content.ReadAsStringAsync();
-
-
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(content);

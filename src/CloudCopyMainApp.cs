@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
 
 namespace CloudCopy
 {
@@ -13,37 +14,63 @@ namespace CloudCopy
 
         Boolean _SilentOptionSet = false;
 
-        public void run(string[] args)
+        public async Task<int> run(string[] args)
         {
-            _args = args;
+            try
+            {
+                _args = args;
 
-            if ( _args.Length == 0 )
-            {
-                throw new Exception("Unknown command or options provided.");
+                if ( _args.Length == 0 )
+                {
+                    throw new Exception("Unknown command or options provided.");
+                }
+                else if ( _args.Length > 0 && ( _args[0] == "--help" || _args[0] == "help" ) )
+                {
+                    printUsage();
+                }
+                else if ( _args[0] == "upload" && _args.Length > 2 )
+                {
+                    await upload();
+                }
+                else if ( _args[0] == "list" && _args.Length > 1 )
+                {
+                    await list();
+                }
+                else if ( _args[0] == "download" && _args.Length > 1 )
+                {
+                    await download();
+                }
+                else
+                {
+                    throw new Exception("Unknown command or options provided.");
+                }
             }
-            else if ( _args.Length > 0 && ( _args[0] == "--help" || _args[0] == "help" ) )
+            catch (C4CClientException C4Cex)
             {
-                printUsage();
+                TextWriter errorWriter = Console.Error;
+                
+                errorWriter.WriteLine( C4Cex.Message );
+
+                if ( C4Cex.InnerException != null )
+                {
+                    errorWriter.WriteLine(C4Cex.InnerException.Message);
+                }
+
+                return 2;
             }
-            else if ( _args[0] == "upload" && _args.Length > 2 )
+            catch (Exception ex)
             {
-                upload();
+                TextWriter errorWriter = Console.Error;
+
+                errorWriter.WriteLine( ex.Message );
+
+                return 1;
             }
-            else if ( _args[0] == "list" && _args.Length > 1 )
-            {
-                list();
-            }
-            else if ( _args[0] == "download" && _args.Length > 1 )
-            {
-                download();
-            }
-            else
-            {
-                throw new Exception("Unknown command or options provided.");
-            }
+
+            return 0;
         }
 
-        private void list()
+        private async Task list()
         {
             C4CHttpClient Client;
 
@@ -126,7 +153,7 @@ namespace CloudCopy
                 Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier);
             }
 
-            var fileListing = Client.GetFileListingAsync(Directory2Read).Result;
+            var fileListing = await Client.GetFileListingAsync(Directory2Read);
 
             if ( FilterByWildcard )
             {
@@ -142,7 +169,7 @@ namespace CloudCopy
 
         }
 
-        private void download()
+        private async Task download()
         {
             C4CHttpClient Client;
             List<string> OptionsAndParameter = new List<string>(_args);
@@ -211,7 +238,7 @@ namespace CloudCopy
                 Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier);
             }
 
-            var fileListing = Client.GetFileListingAsync(Directory2Read).Result;
+            var fileListing = await Client.GetFileListingAsync(Directory2Read);
 
             if ( FilterByWildcard )
             {
@@ -226,16 +253,33 @@ namespace CloudCopy
             //Links cannot be downloaded and dont have a DownloadURI set
             fileListing.removeEmptyURIs();
 
-            Parallel.ForEach(fileListing, new ParallelOptions {MaxDegreeOfParallelism = MaxParallelism},
-            fileMetadata =>
+
+            var DownloadTasks = new List<Task>();
+            var sSlim = new SemaphoreSlim(initialCount: MaxParallelism);
+
+            foreach (var fileMetadata in fileListing)
             {
-                    var DownloadTask = Client.DownloadFileAsync(fileMetadata,new FileSystemResource(fileMetadata.Filename));
-                    DownloadTask.Wait();
-                    Console.WriteLine(fileMetadata.Filename);
-            });
+                await sSlim.WaitAsync();
+
+                DownloadTasks.Add(
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await Client.DownloadFileAsync(fileMetadata,new FileSystemResource(fileMetadata.Filename));
+                            Console.WriteLine(fileMetadata.Filename);
+                        }
+                        finally
+                        {
+                            sSlim.Release();
+                        }
+                    }));
+            }
+
+            await Task.WhenAll(DownloadTasks);
         }
 
-        private void upload()
+        private async Task upload()
         {
             IRemoteResource Target;
             C4CHttpClient Client;
@@ -291,11 +335,11 @@ namespace CloudCopy
 
             foreach (string FilePath in Files2Upload)
             {
-                var UploadTask = Client.UploadFileAsync(new FileSystemResource(FilePath), Target);
+                var UploadTask = await Client.UploadFileAsync(new FileSystemResource(FilePath), Target);
 
                 if (!_SilentOptionSet)
                 {
-                    UploadTask.Result.printMetdata();
+                    UploadTask.printMetdata();
 
                     Console.WriteLine();
                 }

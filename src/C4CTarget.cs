@@ -28,24 +28,21 @@ namespace CloudCopy
             _QueryClient = queryClient;
         }
 
-        public string getSubPath()
+        public async Task<string> getSubPathAsync()
         {
             string subPath;
 
             if ( _EntityID != null )
             {
-                Task<string> PathQuery;
-                PathQuery = _QueryClient.getObjectIDFromID(_C4CEntityMapper.getCollectionName(),_EntityID, _C4CEntityMapper.getHumanReadableIDName());
+                var PathQuery = await _QueryClient.getObjectIDFromID(_C4CEntityMapper.getCollectionName(),_EntityID, _C4CEntityMapper.getHumanReadableIDName());
 
-                //subPath = _ParentCollectionName + "('" + PathQuery.Result + "')/" + _AttachmentCollectionName;
-                subPath = _C4CEntityMapper.getCollectionName() + "('" + PathQuery.Result + "')/" + _C4CEntityMapper.getAttachmentCollectionName();
+                subPath = _C4CEntityMapper.getCollectionName() + "('" + PathQuery + "')/" + _C4CEntityMapper.getAttachmentCollectionName();
             }
             else
             {
                 subPath = _C4CEntityMapper.getCollectionName() + "('" + _EntityObjectID + "')/" + _C4CEntityMapper.getAttachmentCollectionName();
             }
 
-            
             return subPath;
         }
     }

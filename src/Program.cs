@@ -10,20 +10,12 @@ namespace CloudCopy
     {
         static int Main(string[] args)
         {
-            try
-            {
-                CloudCopyMainApp mainApp = new CloudCopyMainApp();
-                mainApp.run(args);
 
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                TextWriter errorWriter = Console.Error;
-                errorWriter.WriteLine(ex.Message);
+            CloudCopyMainApp mainApp = new CloudCopyMainApp();
+            int result = mainApp.run(args).Result;;
 
-                return 1;
-            }
+            return result;
+
         }
     }
 }
