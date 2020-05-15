@@ -12,7 +12,7 @@ namespace CloudCopy
     {
         string[] _args;
 
-        Boolean _SilentOptionSet = false;
+        bool _SilentOptionSet = false;
 
         public async Task<int> run(string[] args)
         {
@@ -462,7 +462,7 @@ namespace CloudCopy
             
             StreamReader reader = new StreamReader(EntityMappingStream);
 
-            String helpText = reader.ReadToEnd();
+            string helpText = reader.ReadToEnd();
 
             helpText = helpText.Replace( "~~CONFIGFILE~~",ConfigFileHandler.getDefaultConfigFilePath());
 

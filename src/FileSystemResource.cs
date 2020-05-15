@@ -17,7 +17,7 @@ namespace CloudCopy
         public string getBase64SourceString()
         {
             Byte[] bytes = File.ReadAllBytes(_FilePath);
-            String Base64File = Convert.ToBase64String(bytes);
+            string Base64File = Convert.ToBase64String(bytes);
 
             return Base64File;
         }

@@ -10,12 +10,11 @@ namespace CloudCopy
     {
         static int Main(string[] args)
         {
+            var cloudCopyMainApp = new CloudCopyMainApp();
 
-            CloudCopyMainApp mainApp = new CloudCopyMainApp();
-            int result = mainApp.run(args).Result;;
+            int result = cloudCopyMainApp.run(args).Result;
 
             return result;
-
         }
     }
 }

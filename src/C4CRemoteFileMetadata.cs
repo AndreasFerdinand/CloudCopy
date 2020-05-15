@@ -30,7 +30,7 @@ namespace CloudCopy
             XmlNamespaceManager mgr = new XmlNamespaceManager(xmlDoc.NameTable);
             mgr.AddNamespace("d", "http://schemas.microsoft.com/ado/2007/08/dataservices");
             mgr.AddNamespace("m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata");
-            mgr.AddNamespace(String.Empty,"http://www.w3.org/2005/Atom");
+            mgr.AddNamespace(string.Empty,"http://www.w3.org/2005/Atom");
             mgr.AddNamespace("default","http://www.w3.org/2005/Atom");
 
             XmlElement root = xmlDoc.DocumentElement;
