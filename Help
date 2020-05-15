@@ -11,6 +11,11 @@ DESCRIPTION
     -s	Silent
     -C  Set Attachment TypeCode (default 10001)
 
+        Essential TypeCodes (selection):
+          10001  Standard Attachment
+          10010  Employee Image
+          10011  Product Image
+
   Listing files:
     CloudCopy list [options] [user@host:]<TargetEntityName>:{<UUID>|#<ID>}
 
@@ -41,6 +46,7 @@ DESCRIPTION
 EXAMPLES
   CloudCopy upload Document.pdf hans@my123456.crm.ondemand.com:ServiceRequest:bb11aa2b4ffdd7744cc2734aa33c6be
   CloudCopy upload * ServiceRequest:#1234
+  CloudCopy upload -C 10011 product.png Product:#12312312
   CloudCopy list Contact:#1234
   CloudCopy download ServiceRequest:#44
   CloudCopy download -P "ErrorDescription.pdf" ServiceRequest:#22
