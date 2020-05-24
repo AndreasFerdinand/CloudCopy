@@ -38,9 +38,9 @@ Download all pdf files of Contact 2000000:
 CloudCopy download -P "*.pdf" Contact:#2000000
 ```
 
-Download all files of ServiceRequest 333:
+Download all files of ServiceRequest 333 using 6 parallel jobs:
 ```
-CloudCopy download ServiceRequest:#333
+CloudCopy download -T 6 ServiceRequest:#333
 ```
 
 To set a product image you have to provide the TypeCode 10011 using option `-C`:
