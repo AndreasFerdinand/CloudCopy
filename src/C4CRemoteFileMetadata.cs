@@ -3,8 +3,12 @@ using System.Xml;
 
 namespace CloudCopy
 {
-    class C4CRemoteFileMetadata : IRemoteFileMetadata
+    public class C4CRemoteFileMetadata : IRemoteFileMetadata
     {
+        XmlNode _FileRootNode;
+
+        XmlNamespaceManager _XmlNamespaceManager;
+
         string _Filename;
         string _UUID;
         string _MimeType;
@@ -18,37 +22,56 @@ namespace CloudCopy
 
         public C4CRemoteFileMetadata()
         {
-
+            _XmlNamespaceManager = getDefaultXmlNamespaceManager();
         }
 
-        public C4CRemoteFileMetadata(string metadataXML)
+        public C4CRemoteFileMetadata( XmlNode fileRootNode ) : this()
         {
-   
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(metadataXML);
+            _FileRootNode = fileRootNode;
 
-            XmlNamespaceManager mgr = new XmlNamespaceManager(xmlDoc.NameTable);
-            mgr.AddNamespace("d", "http://schemas.microsoft.com/ado/2007/08/dataservices");
-            mgr.AddNamespace("m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata");
-            mgr.AddNamespace(string.Empty,"http://www.w3.org/2005/Atom");
-            mgr.AddNamespace("default","http://www.w3.org/2005/Atom");
+            parseProperties();
+        }
+
+        public C4CRemoteFileMetadata(string metadataXML)  : this()
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            
+            xmlDoc.LoadXml(metadataXML);
 
             XmlElement root = xmlDoc.DocumentElement;
 
-            XmlNode ObjectIDNode = root.SelectSingleNode("//m:properties/d:Name",mgr);
-            Filename = ObjectIDNode.InnerText;
+            _FileRootNode = xmlDoc.SelectSingleNode("//default:entry", _XmlNamespaceManager );
 
-            ObjectIDNode = root.SelectSingleNode("//m:properties/d:UUID",mgr);
-            UUID = ObjectIDNode.InnerText;
+            parseProperties();
+        }
 
-            ObjectIDNode = root.SelectSingleNode("//m:properties/d:MimeType",mgr);
-            MimeType = ObjectIDNode.InnerText;
+        private void parseProperties()
+        {
+            XmlNode ObjectIDNode;
 
-            ObjectIDNode = root.SelectSingleNode("//m:properties/d:DocumentLink",mgr);
-            DownloadURI = new Uri( ObjectIDNode.InnerText );
+            Filename = getProperty("Name");
+            UUID = getProperty("UUID");
+            MimeType = getProperty("MimeType");
+            CategoryCode = getProperty("CategoryCode");
 
-            ObjectIDNode = root.SelectSingleNode("//default:id",mgr);
+            ObjectIDNode = _FileRootNode.SelectSingleNode(".//default:id",_XmlNamespaceManager);
             MetadataURI = new Uri( ObjectIDNode.InnerText );
+
+            if (CategoryCode == "2")
+            {
+                DownloadURI = new Uri( getProperty("DocumentLink") );
+            }
+        }
+
+        public static XmlNamespaceManager getDefaultXmlNamespaceManager()
+        {
+            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(new NameTable());
+            namespaceManager.AddNamespace("d", "http://schemas.microsoft.com/ado/2007/08/dataservices");
+            namespaceManager.AddNamespace("m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata");
+            namespaceManager.AddNamespace(string.Empty,"http://www.w3.org/2005/Atom");
+            namespaceManager.AddNamespace("default","http://www.w3.org/2005/Atom");
+
+            return namespaceManager;
         }
 
         public string Filename { get => _Filename; set => _Filename = value; }
@@ -62,7 +85,6 @@ namespace CloudCopy
 
         public void printMetdata()
         {
-
             Console.WriteLine("Remote Filename: " + Filename);
             Console.WriteLine("UUID: " + UUID);
             Console.WriteLine("MimeType: " + MimeType);
@@ -74,6 +96,22 @@ namespace CloudCopy
             var builder = new UriBuilder(original);
             builder.Host = newHostName;
             return builder.Uri.ToString();
+        }
+
+        public string getProperty(string PropertyName)
+        {
+            string PropertyValue;
+
+            XmlNode ObjectIDNode = _FileRootNode.SelectSingleNode(".//m:properties/d:" + PropertyName,_XmlNamespaceManager);
+
+            if ( ObjectIDNode == null )
+            {
+                throw new Exception("Property " + PropertyName + " not found");
+            }
+
+            PropertyValue = ObjectIDNode.InnerText;
+
+            return PropertyValue;
         }
     }
 }

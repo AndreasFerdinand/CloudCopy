@@ -12,6 +12,8 @@ namespace CloudCopy
         public Uri DownloadURI{ get; set; }
 
         public void printMetdata();
+
+        public string getProperty(string PropertyName);
     }
 
 }

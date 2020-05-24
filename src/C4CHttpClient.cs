@@ -112,7 +112,7 @@ namespace CloudCopy
             }
 
             //read back file metadata
-            string MetadataRequestUri = MetadataUri + "?$select=UUID,MimeType,Name,DocumentLink";
+            string MetadataRequestUri = MetadataUri + "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode";
             ResponseMessage =  await _HttpClient.GetAsync(MetadataRequestUri);
 
             content = await ResponseMessage.Content.ReadAsStringAsync();
@@ -214,6 +214,11 @@ namespace CloudCopy
             XmlElement root = xmlDoc.DocumentElement;
 
             XmlNode ObjectIDNode = root.SelectSingleNode("//m:properties/d:ObjectID",mgr);
+
+            if ( ObjectIDNode == null )
+            {
+                throw new C4CClientException("Object with User-friendly ID " + ID + " not found.");
+            }
 
             return ObjectIDNode.InnerText;
         }

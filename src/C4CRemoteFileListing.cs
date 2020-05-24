@@ -18,40 +18,13 @@ namespace CloudCopy
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(sourceXML);
 
-            XmlNamespaceManager mgr = new XmlNamespaceManager(xmlDoc.NameTable);
-            mgr.AddNamespace("d", "http://schemas.microsoft.com/ado/2007/08/dataservices");
-            mgr.AddNamespace("m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata");
-            mgr.AddNamespace(string.Empty,"http://www.w3.org/2005/Atom");
-            mgr.AddNamespace("default","http://www.w3.org/2005/Atom");
+            XmlNamespaceManager mgr = C4CRemoteFileMetadata.getDefaultXmlNamespaceManager();
 
-            XmlElement root = xmlDoc.DocumentElement;
-
-            XmlNodeList xmlNodes = xmlDoc.SelectNodes("//default:entry",mgr);
+            XmlNodeList xmlNodes = xmlDoc.SelectNodes("//default:entry", mgr );
 
             foreach( XmlNode ElementNode in xmlNodes)
             {
-                C4CRemoteFileMetadata CurrentFile = new C4CRemoteFileMetadata();
-
-                XmlNode ObjectIDNode = ElementNode.SelectSingleNode(".//m:properties/d:Name",mgr);
-                CurrentFile.Filename = ObjectIDNode.InnerText;
-
-                ObjectIDNode = ElementNode.SelectSingleNode(".//m:properties/d:UUID",mgr);
-                CurrentFile.UUID = ObjectIDNode.InnerText;
-
-                ObjectIDNode = ElementNode.SelectSingleNode(".//m:properties/d:MimeType",mgr);
-                CurrentFile.MimeType = ObjectIDNode.InnerText;
-
-                ObjectIDNode = ElementNode.SelectSingleNode(".//m:properties/d:CategoryCode",mgr);
-                CurrentFile.CategoryCode = ObjectIDNode.InnerText;
-
-                if ( CurrentFile.CategoryCode == "2")
-                {
-                    ObjectIDNode = ElementNode.SelectSingleNode(".//m:properties/d:DocumentLink",mgr);
-                    CurrentFile.DownloadURI = new Uri( ObjectIDNode.InnerText );
-                }
-
-                ObjectIDNode = ElementNode.SelectSingleNode(".//default:id",mgr);
-                CurrentFile.MetadataURI = new Uri( ObjectIDNode.InnerText );
+                C4CRemoteFileMetadata CurrentFile = new C4CRemoteFileMetadata(ElementNode);
 
                 _RemoteFileMetadata.Add(CurrentFile);
             }
@@ -147,7 +120,7 @@ namespace CloudCopy
                 {
                     Filename2Display = "'" + Filename2Display + "'";
                 }
-
+//File.printMetdata();
                 Console.WriteLine("{0} {1} {2} {3}",CategoryCodeID,File.UUID,File.MimeType.PadRight(longestMimeType),Filename2Display);
             }
 
