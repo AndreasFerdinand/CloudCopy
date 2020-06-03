@@ -1,9 +1,10 @@
 using System;
+using System.Globalization;
 using System.Xml;
 
 namespace CloudCopy
 {
-    public class C4CRemoteFileMetadata : IRemoteFileMetadata
+    public class C4CRemoteFileMetadata : IRemoteFileMetadata, IFormattable
     {
         XmlNode _FileRootNode;
 
@@ -35,7 +36,7 @@ namespace CloudCopy
         public C4CRemoteFileMetadata(string metadataXML)  : this()
         {
             XmlDocument xmlDoc = new XmlDocument();
-            
+
             xmlDoc.LoadXml(metadataXML);
 
             XmlElement root = xmlDoc.DocumentElement;
@@ -53,6 +54,8 @@ namespace CloudCopy
             UUID = getProperty("UUID");
             MimeType = getProperty("MimeType");
             CategoryCode = getProperty("CategoryCode");
+
+            ChangedAt = DateTime.Parse(getProperty("LastUpdatedOn"));
 
             ObjectIDNode = _FileRootNode.SelectSingleNode(".//default:id",_XmlNamespaceManager);
             MetadataURI = new Uri( ObjectIDNode.InnerText );
@@ -112,6 +115,37 @@ namespace CloudCopy
             PropertyValue = ObjectIDNode.InnerText;
 
             return PropertyValue;
+        }
+
+        public override string ToString()
+        {
+            return this.ToString("G", CultureInfo.CurrentCulture);
+        }
+
+        public string ToString(string format)
+        {
+           return this.ToString(format, CultureInfo.CurrentCulture);
+        }
+
+        public string ToString(string format, IFormatProvider formatProvider)
+        {
+            if (String.IsNullOrEmpty(format)) format = "G";
+            if (formatProvider == null) formatProvider = CultureInfo.CurrentCulture;
+
+            switch (format.ToUpperInvariant())
+            {
+                case "F":
+                case "G":
+                    return Filename;
+                case "D":
+                    return ( CategoryCode == "2" ? DownloadURI.ToString() : "" );
+                case "FD":
+                    return ToString("F") + " " + ToString("D");
+                case "LS":
+                    return ChangedAt.ToString(formatProvider) + "  " + Filename;
+                default:
+                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+            }
         }
     }
 }

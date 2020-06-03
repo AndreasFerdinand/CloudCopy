@@ -120,7 +120,7 @@ namespace CloudCopy
                 {
                     Filename2Display = "'" + Filename2Display + "'";
                 }
-//File.printMetdata();
+                //Console.WriteLine(File.ToString("FD"));
                 Console.WriteLine("{0} {1} {2} {3}",CategoryCodeID,File.UUID,File.MimeType.PadRight(longestMimeType),Filename2Display);
             }
 

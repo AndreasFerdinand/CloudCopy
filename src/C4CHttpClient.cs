@@ -40,7 +40,7 @@ namespace CloudCopy
             //await fetchCsrfTokenAsync();
             HttpResponseMessage ResponseMessage;
 
-            string query = "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode&$orderby=Name";
+            string query = "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode,LastUpdatedOn&$orderby=Name";
 
             string SourceSubPath = await Source.getSubPathAsync();
 
