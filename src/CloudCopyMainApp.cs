@@ -40,6 +40,10 @@ namespace CloudCopy
                 {
                     await download();
                 }
+                else if ( _args[0] == "version" )
+                {
+                    printVersion();
+                }
                 else
                 {
                     throw new Exception("Unknown command or options provided.");
@@ -467,6 +471,17 @@ namespace CloudCopy
             helpText = helpText.Replace( "~~CONFIGFILE~~",ConfigFileHandler.getDefaultConfigFilePath());
 
             Console.Write(helpText);
+        }
+
+        private static void printVersion()
+        {
+            Stream VersionStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CloudCopy.VersionName");
+
+            StreamReader reader = new StreamReader(VersionStream);
+
+            string versionText = reader.ReadToEnd();
+
+            Console.Write(versionText);
         }
 
     }

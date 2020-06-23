@@ -8,6 +8,7 @@
   <ItemGroup>
     <EmbeddedResource Include="../EntityMapping.xml" />
     <EmbeddedResource Include="../Help" />
+    <EmbeddedResource Include="../VersionName" />
   </ItemGroup>
 
 </Project>
