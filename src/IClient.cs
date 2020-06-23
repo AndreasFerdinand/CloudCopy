@@ -8,6 +8,6 @@ namespace CloudCopy
     {
         public Task<IRemoteFileMetadata> UploadFileAsync(ILocalResource Source, IRemoteResource Target);
         public Task DownloadFileAsync(IRemoteFileMetadata Source, ILocalResource Target);
-
+        Task<C4CRemoteFileListing> GetFileListingAsync(IRemoteResource Source);
     }
 }
