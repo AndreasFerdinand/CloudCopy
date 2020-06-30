@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using System.IO;
-
-namespace CloudCopy
+﻿namespace CloudCopy
 {
-    class Program
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    public class Program
     {
-        static int Main(string[] args)
+        public static int Main(string[] args)
         {
             var cloudCopyMainApp = new CloudCopyMainApp();
 

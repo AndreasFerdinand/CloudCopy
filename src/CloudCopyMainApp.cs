@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using System.ComponentModel;
-using System.IO;
-using System.Threading;
-
 namespace CloudCopy
 {
-    class CloudCopyMainApp
+    using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using System.Linq;
+    using System.ComponentModel;
+    using System.IO;
+    using System.Threading;
+
+    public class CloudCopyMainApp
     {
         string[] _args;
 
@@ -105,25 +105,25 @@ namespace CloudCopy
 
                 if (element == "-r") //reverse sort order
                 {
-                    outputOptions.sortDirection = ListSortDirection.Descending;
+                    outputOptions.SortDirection = ListSortDirection.Descending;
                     continue;
                 }
 
                 if (element == "-X") //sort by file extension
                 {
-                    outputOptions.sortAttribute = "FilenameExtension";
+                    outputOptions.SortAttribute = "FilenameExtension";
                     continue;
                 }
 
                 if (element == "-M") //sort by Mime type
                 {
-                    outputOptions.sortAttribute = "MimeType";
+                    outputOptions.SortAttribute = "MimeType";
                     continue;
                 }
 
                 if (element == "-U") //sort by UUID
                 {
-                    outputOptions.sortAttribute = "UUID";
+                    outputOptions.SortAttribute = "UUID";
                     continue;
                 }
 
@@ -149,27 +149,27 @@ namespace CloudCopy
             if (targetDescription.Identifier[0] == '#')
             {
                 //Directory2Read = new C4CTarget(targetDescription.Collection, targetDescription.Identifier.Substring(1), "ServiceRequestAttachmentFolder", Client);
-                Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),Client);
+                Directory2Read = TargetFactory.CreateC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),Client);
             }
             else
             {
                 //Directory2Read = new C4CTarget(targetDescription.Collection, targetDescription.Identifier, "ServiceRequestAttachmentFolder");
-                Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier);
+                Directory2Read = TargetFactory.CreateC4CTarget(targetDescription.Collection,targetDescription.Identifier);
             }
 
             var fileListing = await Client.GetFileListingAsync(Directory2Read);
 
             if ( FilterByWildcard )
             {
-                fileListing.removeNotMatchingWildcard( FilterPattern );
+                fileListing.RemoveNotMatchingWildcard( FilterPattern );
             }
 
             if ( FilterByRegex )
             {
-                fileListing.removeNotMatchingRegex( FilterPattern );
+                fileListing.RemoveNotMatchingRegex( FilterPattern );
             }
 
-            fileListing.listFiles(outputOptions);
+            fileListing.ListFiles(outputOptions);
 
         }
 
@@ -235,27 +235,27 @@ namespace CloudCopy
 
             if (targetDescription.Identifier[0] == '#')
             {
-                Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),Client);
+                Directory2Read = TargetFactory.CreateC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),Client);
             }
             else
             {
-                Directory2Read = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier);
+                Directory2Read = TargetFactory.CreateC4CTarget(targetDescription.Collection,targetDescription.Identifier);
             }
 
             var fileListing = await Client.GetFileListingAsync(Directory2Read);
 
             if ( FilterByWildcard )
             {
-                fileListing.removeNotMatchingWildcard( FilterPattern );
+                fileListing.RemoveNotMatchingWildcard( FilterPattern );
             }
 
             if ( FilterByRegex )
             {
-                fileListing.removeNotMatchingRegex( FilterPattern );
+                fileListing.RemoveNotMatchingRegex( FilterPattern );
             }
 
             //Links cannot be downloaded and dont have a DownloadURI set
-            fileListing.removeEmptyURIs();
+            fileListing.RemoveEmptyURIs();
 
 
             var DownloadTasks = new List<Task>();
@@ -343,12 +343,12 @@ namespace CloudCopy
             if (targetDescription.Identifier[0] == '#')
             {
                 //Target = new C4CTarget(targetDescription.Collection, targetDescription.Identifier.Substring(1), "ServiceRequestAttachmentFolder", Client);
-                Target = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),Client, TypeCode);
+                Target = TargetFactory.CreateC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),Client, TypeCode);
             }
             else
             {
                 //Target = new C4CTarget(targetDescription.Collection, targetDescription.Identifier, "ServiceRequestAttachmentFolder");
-                Target = TargetFactory.createC4CTarget(targetDescription.Collection,targetDescription.Identifier, TypeCode);
+                Target = TargetFactory.CreateC4CTarget(targetDescription.Collection,targetDescription.Identifier, TypeCode);
             }
 
             foreach (string FilePath in Files2Upload)
@@ -357,7 +357,7 @@ namespace CloudCopy
 
                 if (!_SilentOptionSet)
                 {
-                    UploadTask.printMetdata();
+                    UploadTask.PrintMetdata();
 
                     Console.WriteLine();
                 }
@@ -372,13 +372,13 @@ namespace CloudCopy
 
             if (targetDescription.Hostname != "" && targetDescription.Username != "")
             {
-                Client = Factory.createC4CHttpClient(targetDescription.Hostname, new ConsoleCredentialHandler(targetDescription.Username));
+                Client = Factory.CreateC4CHttpClient(targetDescription.Hostname, new ConsoleCredentialHandler(targetDescription.Username));
             }
             else if (targetDescription.Hostname == "" && targetDescription.Username == "")
             {
                 ConfigFileHandler Configuration = new ConfigFileHandler();
 
-                Client = Factory.createC4CHttpClient(Configuration.Hostname, Configuration);
+                Client = Factory.CreateC4CHttpClient(Configuration.Hostname, Configuration);
             }
             else
             {
@@ -468,7 +468,7 @@ namespace CloudCopy
 
             string helpText = reader.ReadToEnd();
 
-            helpText = helpText.Replace( "~~CONFIGFILE~~",ConfigFileHandler.getDefaultConfigFilePath());
+            helpText = helpText.Replace( "~~CONFIGFILE~~",ConfigFileHandler.GetDefaultConfigFilePath());
 
             Console.Write(helpText);
         }
@@ -483,6 +483,5 @@ namespace CloudCopy
 
             Console.Write(versionText);
         }
-
     }
 }

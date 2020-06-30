@@ -1,39 +1,37 @@
-using System;
-using System.Globalization;
-using System.Xml;
-
 namespace CloudCopy
 {
+    using System;
+    using System.Globalization;
+    using System.Xml;
+
     public class C4CRemoteFileMetadata : IRemoteFileMetadata, IFormattable
     {
-        XmlNode _FileRootNode;
-
-        XmlNamespaceManager _XmlNamespaceManager;
-
-        string _Filename;
-        string _UUID;
-        string _MimeType;
-        string _User;
-        DateTime _ChangedAt;
-
-        string _CategoryCode;
-
-        Uri _MetadataURI;
-        Uri _DownloadURI;
+        private XmlNode fileXmlRootNode;
+        private XmlNamespaceManager xmlNamespaceManager;
+        private string filename;
+        private string uuid;
+        private string mimeType;
+        private string user;
+        private DateTime changedAt;
+        private string categoryCode;
+        private Uri metadataURI;
+        private Uri downloadURI;
 
         public C4CRemoteFileMetadata()
         {
-            _XmlNamespaceManager = getDefaultXmlNamespaceManager();
+            this.xmlNamespaceManager = GetDefaultXmlNamespaceManager();
         }
 
-        public C4CRemoteFileMetadata( XmlNode fileRootNode ) : this()
+        public C4CRemoteFileMetadata(XmlNode fileRootNode)
+            : this()
         {
-            _FileRootNode = fileRootNode;
+            this.fileXmlRootNode = fileRootNode;
 
-            parseProperties();
+            this.ParseProperties();
         }
 
-        public C4CRemoteFileMetadata(string metadataXML)  : this()
+        public C4CRemoteFileMetadata(string metadataXML)
+            : this()
         {
             XmlDocument xmlDoc = new XmlDocument();
 
@@ -41,80 +39,61 @@ namespace CloudCopy
 
             XmlElement root = xmlDoc.DocumentElement;
 
-            _FileRootNode = xmlDoc.SelectSingleNode("//default:entry", _XmlNamespaceManager );
+            this.fileXmlRootNode = xmlDoc.SelectSingleNode("//default:entry", this.xmlNamespaceManager);
 
-            parseProperties();
+            this.ParseProperties();
         }
 
-        private void parseProperties()
-        {
-            XmlNode ObjectIDNode;
+        public string Filename { get => this.filename; set => this.filename = value; }
 
-            Filename = getProperty("Name");
-            UUID = getProperty("UUID");
-            MimeType = getProperty("MimeType");
-            CategoryCode = getProperty("CategoryCode");
+        public string UUID { get => this.uuid; set => this.uuid = value; }
 
-            ChangedAt = DateTime.Parse(getProperty("LastUpdatedOn"));
+        public string MimeType { get => this.mimeType; set => this.mimeType = value; }
 
-            ObjectIDNode = _FileRootNode.SelectSingleNode(".//default:id",_XmlNamespaceManager);
-            MetadataURI = new Uri( ObjectIDNode.InnerText );
+        public string User { get => this.user; set => this.user = value; }
 
-            if (CategoryCode == "2")
-            {
-                DownloadURI = new Uri( getProperty("DocumentLink") );
-            }
-        }
+        public DateTime ChangedAt { get => this.changedAt; set => this.changedAt = value; }
 
-        public static XmlNamespaceManager getDefaultXmlNamespaceManager()
+        public Uri MetadataURI { get => this.metadataURI; set => this.metadataURI = value; }
+
+        public Uri DownloadURI { get => this.downloadURI; set => this.downloadURI = value; }
+
+        public string CategoryCode { get => this.categoryCode; set => this.categoryCode = value; }
+
+        public static XmlNamespaceManager GetDefaultXmlNamespaceManager()
         {
             XmlNamespaceManager namespaceManager = new XmlNamespaceManager(new NameTable());
             namespaceManager.AddNamespace("d", "http://schemas.microsoft.com/ado/2007/08/dataservices");
             namespaceManager.AddNamespace("m", "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata");
-            namespaceManager.AddNamespace(string.Empty,"http://www.w3.org/2005/Atom");
-            namespaceManager.AddNamespace("default","http://www.w3.org/2005/Atom");
+            namespaceManager.AddNamespace(string.Empty, "http://www.w3.org/2005/Atom");
+            namespaceManager.AddNamespace("default", "http://www.w3.org/2005/Atom");
 
             return namespaceManager;
         }
 
-        public string Filename { get => _Filename; set => _Filename = value; }
-        public string UUID { get => _UUID; set => _UUID = value; }
-        public string MimeType { get => _MimeType; set => _MimeType = value; }
-        public string User { get => _User; set => _User = value; }
-        public DateTime ChangedAt { get => _ChangedAt; set => _ChangedAt = value; }
-        public Uri MetadataURI { get => _MetadataURI; set => _MetadataURI = value; }
-        public Uri DownloadURI { get => _DownloadURI; set => _DownloadURI = value; }
-        public string CategoryCode { get => _CategoryCode; set => _CategoryCode = value; }
-
-        public void printMetdata()
+        public void PrintMetdata()
         {
-            Console.WriteLine("Remote Filename: " + Filename);
-            Console.WriteLine("UUID: " + UUID);
-            Console.WriteLine("MimeType: " + MimeType);
-            Console.WriteLine("Metadata URI: " + MetadataURI.ToString());
-            Console.WriteLine("Download URI: " + DownloadURI.ToString());
+            Console.WriteLine("Remote Filename: " + this.Filename);
+            Console.WriteLine("UUID: " + this.UUID);
+            Console.WriteLine("MimeType: " + this.MimeType);
+            Console.WriteLine("Metadata URI: " + this.MetadataURI.ToString());
+            Console.WriteLine("Download URI: " + this.DownloadURI.ToString());
         }
 
-        string ReplaceHost(string original, string newHostName) {
-            var builder = new UriBuilder(original);
-            builder.Host = newHostName;
-            return builder.Uri.ToString();
-        }
-
-        public string getProperty(string PropertyName)
+        public string GetProperty(string propertyName)
         {
-            string PropertyValue;
+            string propertyValue;
 
-            XmlNode ObjectIDNode = _FileRootNode.SelectSingleNode(".//m:properties/d:" + PropertyName,_XmlNamespaceManager);
+            XmlNode objectIDNode = this.fileXmlRootNode.SelectSingleNode(".//m:properties/d:" + propertyName, this.xmlNamespaceManager);
 
-            if ( ObjectIDNode == null )
+            if (objectIDNode == null)
             {
-                throw new Exception("Property " + PropertyName + " not found");
+                throw new Exception("Property " + propertyName + " not found");
             }
 
-            PropertyValue = ObjectIDNode.InnerText;
+            propertyValue = objectIDNode.InnerText;
 
-            return PropertyValue;
+            return propertyValue;
         }
 
         public override string ToString()
@@ -129,23 +108,57 @@ namespace CloudCopy
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            if (String.IsNullOrEmpty(format)) format = "G";
-            if (formatProvider == null) formatProvider = CultureInfo.CurrentCulture;
+            if (string.IsNullOrEmpty(format))
+            {
+                format = "G";
+            }
+
+            if (formatProvider == null)
+            {
+                formatProvider = CultureInfo.CurrentCulture;
+            }
 
             switch (format.ToUpperInvariant())
             {
                 case "F":
                 case "G":
-                    return Filename;
+                    return this.Filename;
                 case "D":
-                    return ( CategoryCode == "2" ? DownloadURI.ToString() : "" );
+                    return this.CategoryCode == "2" ? this.DownloadURI.ToString() : string.Empty;
                 case "FD":
-                    return ToString("F") + " " + ToString("D");
+                    return this.ToString("F") + " " + this.ToString("D");
                 case "LS":
-                    return ChangedAt.ToString(formatProvider) + "  " + Filename;
+                    return this.ChangedAt.ToString(formatProvider) + "  " + this.Filename;
                 default:
-                    throw new FormatException(String.Format("The {0} format string is not supported.", format));
+                    throw new FormatException(string.Format("The {0} format string is not supported.", format));
             }
+        }
+
+        private void ParseProperties()
+        {
+            XmlNode objectIDNode;
+
+            this.Filename = this.GetProperty("Name");
+            this.UUID = this.GetProperty("UUID");
+            this.MimeType = this.GetProperty("MimeType");
+            this.CategoryCode = this.GetProperty("CategoryCode");
+
+            this.ChangedAt = DateTime.Parse(this.GetProperty("LastUpdatedOn"));
+
+            objectIDNode = this.fileXmlRootNode.SelectSingleNode(".//default:id", this.xmlNamespaceManager);
+            this.MetadataURI = new Uri(objectIDNode.InnerText);
+
+            if (this.CategoryCode == "2")
+            {
+                this.DownloadURI = new Uri(this.GetProperty("DocumentLink"));
+            }
+        }
+
+        private string ReplaceHost(string original, string newHostName)
+        {
+            var builder = new UriBuilder(original);
+            builder.Host = newHostName;
+            return builder.Uri.ToString();
         }
     }
 }

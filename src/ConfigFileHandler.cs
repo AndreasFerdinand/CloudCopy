@@ -1,32 +1,51 @@
-using System;
-using System.IO;
-using System.Net;
-using System.Threading.Tasks;
-using System.Xml;
-
 namespace CloudCopy
 {
-    class ConfigFileHandler : INetworkCredentialHandler
+    using System;
+    using System.IO;
+    using System.Net;
+    using System.Xml;
+
+    public class ConfigFileHandler : INetworkCredentialHandler
     {
-        string _Filename;
-        string _Username;
-        string _Password;
-        string _Hostname;
+        private string filename;
+        private string username;
+        private string password;
+        private string hostname;
 
         public ConfigFileHandler()
         {
-            Filename = getDefaultConfigFilePath();
+            this.Filename = GetDefaultConfigFilePath();
 
-            LoadData();
+            this.LoadData();
         }
 
-        public static string getDefaultConfigFilePath()
+        public ConfigFileHandler(string filename)
         {
-            string TempFilename = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            this.Filename = filename;
 
-            TempFilename = TempFilename + Path.DirectorySeparatorChar + "CloudCopy" + Path.DirectorySeparatorChar + "default.xml";
+            this.LoadData();
+        }
 
-            return TempFilename;
+        public string Filename { get => this.filename; set => this.filename = value; }
+
+        public string Username { get => this.username; set => this.username = value; }
+
+        public string Password { get => this.password; set => this.password = value; }
+
+        public string Hostname { get => this.hostname; set => this.hostname = value; }
+
+        public static string GetDefaultConfigFilePath()
+        {
+            string tempFilename = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+            tempFilename = tempFilename + Path.DirectorySeparatorChar + "CloudCopy" + Path.DirectorySeparatorChar + "default.xml";
+
+            return tempFilename;
+        }
+
+        public NetworkCredential GetCredentials()
+        {
+            return new NetworkCredential(this.Username, this.Password);
         }
 
         private void LoadData()
@@ -34,40 +53,23 @@ namespace CloudCopy
             try
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(Filename);
+                xmlDoc.Load(this.Filename);
 
                 XmlElement root = xmlDoc.DocumentElement;
 
-                XmlNode Node = root.SelectSingleNode("Hostname");
-                Hostname = Node.InnerText;
+                XmlNode node = root.SelectSingleNode("Hostname");
+                this.Hostname = node.InnerText;
 
-                Node = root.SelectSingleNode("Username");
-                Username = Node.InnerText;
+                node = root.SelectSingleNode("Username");
+                this.Username = node.InnerText;
 
-                Node = root.SelectSingleNode("Password");
-                Password = Node.InnerText;
+                node = root.SelectSingleNode("Password");
+                this.Password = node.InnerText;
             }
             catch
             {
-                throw new Exception("Cannot read credential file " + Filename);
-            } 
-        }
-
-        public ConfigFileHandler(string filename)
-        {
-            Filename = filename;
-
-            LoadData();
-        }
-
-        public string Filename { get => _Filename; set => _Filename = value; }
-        public string Username { get => _Username; set => _Username = value; }
-        public string Password { get => _Password; set => _Password = value; }
-        public string Hostname { get => _Hostname; set => _Hostname = value; }
-
-        public NetworkCredential GetCredentials()
-        {
-            return new NetworkCredential(Username, Password);
+                throw new Exception("Cannot read credential file " + this.Filename);
+            }
         }
     }
 }

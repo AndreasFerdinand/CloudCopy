@@ -1,15 +1,17 @@
-using System;
-using System.Collections.Generic;
-
 namespace CloudCopy
 {
-    interface IRemoteFileListing<T> : IEnumerable<T>
-    {
-        void listFiles();
-        void listFiles(IOutputOptions outputOptions);
+    using System.Collections.Generic;
 
-        void removeNotMatchingWildcard(string pattern);
-        void removeNotMatchingRegex(string pattern);
-        void removeEmptyURIs();
+    public interface IRemoteFileListing<T> : IEnumerable<T>
+    {
+        void ListFiles();
+
+        void ListFiles(IOutputOptions outputOptions);
+
+        void RemoveNotMatchingWildcard(string pattern);
+
+        void RemoveNotMatchingRegex(string pattern);
+
+        void RemoveEmptyURIs();
     }
 }

@@ -1,53 +1,49 @@
-using System;
-using System.Threading.Tasks;
-
 namespace CloudCopy
 {
-    class C4CTarget : IRemoteResource
+    using System.Threading.Tasks;
+
+    public class C4CTarget : IRemoteResource
     {
-        string _EntityObjectID;
-        string _EntityID;
-        string _TypeCode = "10001";
+        private string entityObjectID;
+        private string entityID;
+        private string typeCode = "10001";
+        private IC4CEntityMapper entityMapper;
+        private IC4CQueryClient queryClient;
 
-        IC4CEntityMapper _C4CEntityMapper;
-
-        IC4CQueryClient _QueryClient;
-
-        public string TypeCode { get => _TypeCode; set => _TypeCode = value; }
-
-        public void setC4CEntityMapper(IC4CEntityMapper c4cEntityMapper)
+        public C4CTarget(string entityObjectID)
         {
-            _C4CEntityMapper = c4cEntityMapper;
-        }
-
-        public C4CTarget(string EntityObjectID)
-        {
-            _EntityObjectID = EntityObjectID;
+            this.entityObjectID = entityObjectID;
         }
 
         public C4CTarget(string entityID, IC4CQueryClient queryClient)
         {
-            _EntityID = entityID;
-            _QueryClient = queryClient;
+            this.entityID = entityID;
+            this.queryClient = queryClient;
         }
 
-        public async Task<string> getSubPathAsync()
+        public string TypeCode { get => this.typeCode; set => this.typeCode = value; }
+
+        public void SetC4CEntityMapper(IC4CEntityMapper c4cEntityMapper)
+        {
+            this.entityMapper = c4cEntityMapper;
+        }
+
+        public async Task<string> GetSubPathAsync()
         {
             string subPath;
 
-            if ( _EntityID != null )
+            if (this.entityID != null)
             {
-                var PathQuery = await _QueryClient.getObjectIDFromID(_C4CEntityMapper.getCollectionName(),_EntityID, _C4CEntityMapper.getHumanReadableIDName());
+                var pathQuery = await this.queryClient.GetObjectIDFromUserFriendlyId(this.entityMapper.GetCollectionName(), this.entityID, this.entityMapper.GetNameOfUserFriendlyID());
 
-                subPath = _C4CEntityMapper.getCollectionName() + "('" + PathQuery + "')/" + _C4CEntityMapper.getAttachmentCollectionName();
+                subPath = this.entityMapper.GetCollectionName() + "('" + pathQuery + "')/" + this.entityMapper.GetAttachmentCollectionName();
             }
             else
             {
-                subPath = _C4CEntityMapper.getCollectionName() + "('" + _EntityObjectID + "')/" + _C4CEntityMapper.getAttachmentCollectionName();
+                subPath = this.entityMapper.GetCollectionName() + "('" + this.entityObjectID + "')/" + this.entityMapper.GetAttachmentCollectionName();
             }
 
             return subPath;
         }
     }
-
 }

@@ -1,10 +1,11 @@
-
 namespace CloudCopy
 {
-    interface IC4CEntityMapper
+    public interface IC4CEntityMapper
     {
-        string getCollectionName();
-        string getAttachmentCollectionName();
-        string getHumanReadableIDName();
+        string GetCollectionName();
+
+        string GetAttachmentCollectionName();
+
+        string GetNameOfUserFriendlyID();
     }
 }

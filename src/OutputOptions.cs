@@ -1,27 +1,29 @@
-
-using System.Collections.Generic;
-using System.ComponentModel;
-
 namespace CloudCopy
 {
-    class OutputOptions : IOutputOptions
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public class OutputOptions : IOutputOptions
     {
-        string _sortAttribute;
-        ListSortDirection _sortDirection;
+        private string sortAttribute;
+        private ListSortDirection sortDirection;
+        private List<string> outputFields;
 
-        List<string> _outputFields;
-
-        public OutputOptions() : this("",ListSortDirection.Ascending) {}
+        public OutputOptions()
+            : this(string.Empty, ListSortDirection.Ascending)
+        {
+        }
 
         public OutputOptions(string sortAttribute, ListSortDirection sortDirection)
         {
-            this.sortAttribute = sortAttribute;
-            this.sortDirection = sortDirection;
+            this.SortAttribute = sortAttribute;
+            this.SortDirection = sortDirection;
         }
 
-        public string sortAttribute { get => _sortAttribute; set => _sortAttribute = value; }
-        public ListSortDirection sortDirection { get => _sortDirection; set => _sortDirection = value; }
-        public List<string> outputFields { get => _outputFields; set => _outputFields = value; }
-    }
+        public string SortAttribute { get => this.sortAttribute; set => this.sortAttribute = value; }
 
+        public ListSortDirection SortDirection { get => this.sortDirection; set => this.sortDirection = value; }
+
+        public List<string> OutputFields { get => this.outputFields; set => this.outputFields = value; }
+    }
 }

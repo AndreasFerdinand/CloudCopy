@@ -1,13 +1,15 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace CloudCopy
 {
-    interface IClient
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    public interface IClient
     {
-        public Task<IRemoteFileMetadata> UploadFileAsync(ILocalResource Source, IRemoteResource Target);
-        public Task DownloadFileAsync(IRemoteFileMetadata Source, ILocalResource Target);
-        Task<C4CRemoteFileListing> GetFileListingAsync(IRemoteResource Source);
+        public Task<IRemoteFileMetadata> UploadFileAsync(ILocalResource source, IRemoteResource target);
+
+        public Task DownloadFileAsync(IRemoteFileMetadata source, ILocalResource target);
+
+        Task<C4CRemoteFileListing> GetFileListingAsync(IRemoteResource source);
     }
 }

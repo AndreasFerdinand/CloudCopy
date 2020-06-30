@@ -1,18 +1,16 @@
-using System;
-using System.Threading.Tasks;
-using System.Net.Http;
-
 namespace CloudCopy
 {
-    interface ILocalResource
+    using System.Net.Http;
+    using System.Threading.Tasks;
+
+    public interface ILocalResource
     {
-        public string getBase64SourceString();
-        public string getFileName();
+        public string GetBase64SourceString();
 
-        public string getPath();
+        public string GetFileName();
 
-        public Task writeNewFile(HttpContent content);
+        public string GetPath();
+
+        public Task WriteNewFile(HttpContent content);
     }
-
-
 }

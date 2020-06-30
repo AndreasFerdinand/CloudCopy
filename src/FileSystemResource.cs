@@ -1,44 +1,43 @@
-using System;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
-
 namespace CloudCopy
 {
-    class FileSystemResource : ILocalResource
+    using System;
+    using System.IO;
+    using System.Net.Http;
+    using System.Threading.Tasks;
+
+    public class FileSystemResource : ILocalResource
     {
-        string _FilePath;
+        private string filePath;
 
-        public FileSystemResource(string FilePath)
+        public FileSystemResource(string filePath)
         {
-            _FilePath = FilePath;
+            this.filePath = filePath;
         }
 
-        public string getBase64SourceString()
+        public string GetBase64SourceString()
         {
-            Byte[] bytes = File.ReadAllBytes(_FilePath);
-            string Base64File = Convert.ToBase64String(bytes);
+            byte[] bytes = File.ReadAllBytes(this.filePath);
+            string base64File = Convert.ToBase64String(bytes);
 
-            return Base64File;
+            return base64File;
         }
 
-        public string getFileName()
+        public string GetFileName()
         {
-            return Path.GetFileName(_FilePath);
+            return Path.GetFileName(this.filePath);
         }
 
-        public string getPath()
+        public string GetPath()
         {
-            return _FilePath;
+            return this.filePath;
         }
 
-        public async Task writeNewFile(HttpContent content)
+        public async Task WriteNewFile(HttpContent content)
         {
-            using( var fileToWrite = new FileStream(getPath(),FileMode.Create,FileAccess.Write) )
+            using (var fileToWrite = new FileStream(this.GetPath(), FileMode.Create, FileAccess.Write))
             {
                 await content.CopyToAsync(fileToWrite);
             }
         }
     }
-
 }

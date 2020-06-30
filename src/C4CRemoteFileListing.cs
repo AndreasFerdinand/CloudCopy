@@ -1,151 +1,149 @@
-using System;
-using System.Collections.Generic;
-using System.Xml;
-using System.Linq;
-using System.IO;
-using System.ComponentModel;
-using System.Text.RegularExpressions;
-using System.Collections;
-
 namespace CloudCopy
 {
-    class C4CRemoteFileListing : IRemoteFileListing<C4CRemoteFileMetadata>
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.IO;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using System.Xml;
+
+    public class C4CRemoteFileListing : IRemoteFileListing<C4CRemoteFileMetadata>
     {
-        List<C4CRemoteFileMetadata> _RemoteFileMetadata = new List<C4CRemoteFileMetadata>();
+        private List<C4CRemoteFileMetadata> remoteFileMetadata = new List<C4CRemoteFileMetadata>();
 
         public C4CRemoteFileListing(string sourceXML)
         {
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(sourceXML);
 
-            XmlNamespaceManager mgr = C4CRemoteFileMetadata.getDefaultXmlNamespaceManager();
+            XmlNamespaceManager mgr = C4CRemoteFileMetadata.GetDefaultXmlNamespaceManager();
 
-            XmlNodeList xmlNodes = xmlDoc.SelectNodes("//default:entry", mgr );
+            XmlNodeList xmlNodes = xmlDoc.SelectNodes("//default:entry", mgr);
 
-            foreach( XmlNode ElementNode in xmlNodes)
+            foreach (XmlNode elementNode in xmlNodes)
             {
-                C4CRemoteFileMetadata CurrentFile = new C4CRemoteFileMetadata(ElementNode);
+                C4CRemoteFileMetadata currentFile = new C4CRemoteFileMetadata(elementNode);
 
-                _RemoteFileMetadata.Add(CurrentFile);
+                this.remoteFileMetadata.Add(currentFile);
             }
         }
 
         public IEnumerator<C4CRemoteFileMetadata> GetEnumerator()
         {
-            for ( int i = 0; i < _RemoteFileMetadata.Count; i++ )
+            for (int i = 0; i < this.remoteFileMetadata.Count; i++)
             {
-                yield return _RemoteFileMetadata[i];
+                yield return this.remoteFileMetadata[i];
             }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
-        public void listFiles()
+        public void ListFiles()
         {
-            listFiles(new OutputOptions());
+            this.ListFiles(new OutputOptions());
         }
 
-        public void listFiles(IOutputOptions outputOptions)
+        public void ListFiles(IOutputOptions outputOptions)
         {
-            if ( _RemoteFileMetadata.Count == 0 )
+            if (this.remoteFileMetadata.Count == 0)
             {
                 return;
             }
 
-            if ( outputOptions.sortAttribute == "UUID" )
+            if (outputOptions.SortAttribute == "UUID")
             {
-                if ( outputOptions.sortDirection == ListSortDirection.Ascending )
+                if (outputOptions.SortDirection == ListSortDirection.Ascending)
                 {
-                    _RemoteFileMetadata.Sort((x,y) => x.UUID.CompareTo(y.UUID));
+                    this.remoteFileMetadata.Sort((x, y) => x.UUID.CompareTo(y.UUID));
                 }
                 else
                 {
-                    _RemoteFileMetadata.Sort((x,y) => y.UUID.CompareTo(x.UUID));
+                    this.remoteFileMetadata.Sort((x, y) => y.UUID.CompareTo(x.UUID));
                 }
             }
-            else if ( outputOptions.sortAttribute == "MimeType" )
+            else if (outputOptions.SortAttribute == "MimeType")
             {
-                if ( outputOptions.sortDirection == ListSortDirection.Ascending )
+                if (outputOptions.SortDirection == ListSortDirection.Ascending)
                 {
-                    _RemoteFileMetadata.Sort((x,y) => x.MimeType.CompareTo(y.MimeType));
+                    this.remoteFileMetadata.Sort((x, y) => x.MimeType.CompareTo(y.MimeType));
                 }
                 else
                 {
-                    _RemoteFileMetadata.Sort((x,y) => y.MimeType.CompareTo(x.MimeType));
+                    this.remoteFileMetadata.Sort((x, y) => y.MimeType.CompareTo(x.MimeType));
                 }
             }
-            else if ( outputOptions.sortAttribute == "FilenameExtension" )
+            else if (outputOptions.SortAttribute == "FilenameExtension")
             {
-                if ( outputOptions.sortDirection == ListSortDirection.Ascending )
+                if (outputOptions.SortDirection == ListSortDirection.Ascending)
                 {
-                    _RemoteFileMetadata.Sort((x,y) => Path.GetExtension(x.Filename).CompareTo(Path.GetExtension(y.Filename)));
+                    this.remoteFileMetadata.Sort((x, y) => Path.GetExtension(x.Filename).CompareTo(Path.GetExtension(y.Filename)));
                 }
                 else
                 {
-                    _RemoteFileMetadata.Sort((x,y) => Path.GetExtension(y.Filename).CompareTo(Path.GetExtension(x.Filename)));
+                    this.remoteFileMetadata.Sort((x, y) => Path.GetExtension(y.Filename).CompareTo(Path.GetExtension(x.Filename)));
                 }
             }
             else
             {
-                if ( outputOptions.sortDirection == ListSortDirection.Ascending )
+                if (outputOptions.SortDirection == ListSortDirection.Ascending)
                 {
-                    _RemoteFileMetadata.Sort((x,y) => x.Filename.CompareTo(y.Filename));
+                    this.remoteFileMetadata.Sort((x, y) => x.Filename.CompareTo(y.Filename));
                 }
                 else
                 {
-                    _RemoteFileMetadata.Sort((x,y) => y.Filename.CompareTo(x.Filename));
+                    this.remoteFileMetadata.Sort((x, y) => y.Filename.CompareTo(x.Filename));
                 }
             }
 
-            int longestMimeType = _RemoteFileMetadata.Max( s => s.MimeType.Length );
+            int longestMimeType = this.remoteFileMetadata.Max(s => s.MimeType.Length);
 
-            foreach(var File in _RemoteFileMetadata)
+            foreach (var file in this.remoteFileMetadata)
             {
-                string CategoryCodeID = "O";
-                string Filename2Display = File.Filename;
+                string categoryCodeID = "O";
+                string filename2Display = file.Filename;
 
-                if ( File.CategoryCode == "3" )
+                if (file.CategoryCode == "3")
                 {
-                    CategoryCodeID = "H";
+                    categoryCodeID = "H";
                 }
-                else if ( File.CategoryCode == "2" )
+                else if (file.CategoryCode == "2")
                 {
-                    CategoryCodeID = "F";
+                    categoryCodeID = "F";
                 }
 
-                if ( Filename2Display.Contains(' ') )
+                if (filename2Display.Contains(' '))
                 {
-                    Filename2Display = "'" + Filename2Display + "'";
+                    filename2Display = "'" + filename2Display + "'";
                 }
-                //Console.WriteLine(File.ToString("FD"));
-                Console.WriteLine("{0} {1} {2} {3}",CategoryCodeID,File.UUID,File.MimeType.PadRight(longestMimeType),Filename2Display);
+
+                // Console.WriteLine(File.ToString("FD"));
+                Console.WriteLine("{0} {1} {2} {3}", categoryCodeID, file.UUID, file.MimeType.PadRight(longestMimeType), filename2Display);
             }
-
-
         }
 
-        public void removeNotMatchingRegex(string pattern)
+        public void RemoveNotMatchingRegex(string pattern)
         {
-            _RemoteFileMetadata = _RemoteFileMetadata.Where( x => Regex.IsMatch(x.Filename,pattern) ).ToList();
+            this.remoteFileMetadata = this.remoteFileMetadata.Where(x => Regex.IsMatch(x.Filename, pattern)).ToList();
         }
 
-        public void removeNotMatchingWildcard(string pattern)
+        public void RemoveNotMatchingWildcard(string pattern)
         {
-            //see https://stackoverflow.com/questions/30299671/matching-strings-with-wildcard
-
+            // see https://stackoverflow.com/questions/30299671/matching-strings-with-wildcard
             string regexpattern;
 
-            regexpattern = "^" + Regex.Escape(pattern).Replace("\\?", ".").Replace("\\*", ".*") + "$"; 
+            regexpattern = "^" + Regex.Escape(pattern).Replace("\\?", ".").Replace("\\*", ".*") + "$";
 
-            removeNotMatchingRegex(regexpattern);
+            this.RemoveNotMatchingRegex(regexpattern);
         }
 
-        public void removeEmptyURIs()
+        public void RemoveEmptyURIs()
         {
-            _RemoteFileMetadata = _RemoteFileMetadata.Where( x => x.DownloadURI != null ).ToList();
+            this.remoteFileMetadata = this.remoteFileMetadata.Where(x => x.DownloadURI != null).ToList();
         }
     }
 }

@@ -1,42 +1,39 @@
-
-using System.IO;
-using System.Xml;
-
 namespace CloudCopy
 {
-    class C4CEntityMapper : IC4CEntityMapper
+    using System.IO;
+    using System.Xml;
+
+    public class C4CEntityMapper : IC4CEntityMapper
     {
-        string _EntityName;
+        private string entityName;
 
         public C4CEntityMapper(string entityName)
         {
-            _EntityName = entityName;
+            this.entityName = entityName;
         }
 
-        public string getAttachmentCollectionName()
+        public string GetAttachmentCollectionName()
         {
-            return _EntityName + "AttachmentFolder";
+            return this.entityName + "AttachmentFolder";
         }
 
-        public string getCollectionName()
+        public string GetCollectionName()
         {
-            return _EntityName + "Collection";
+            return this.entityName + "Collection";
         }
 
-        public string getHumanReadableIDName()
+        public string GetNameOfUserFriendlyID()
         {
-
-            Stream EntityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CloudCopy.EntityMapping.xml");
+            Stream entityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CloudCopy.EntityMapping.xml");
 
             XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(EntityMappingStream);
+            xmlDoc.Load(entityMappingStream);
 
-            XmlNode EntityNode = xmlDoc.SelectSingleNode("/CloudCopyEntityMapping/Entity[@Name='" + _EntityName + "']");
+            XmlNode entityNode = xmlDoc.SelectSingleNode("/CloudCopyEntityMapping/Entity[@Name='" + this.entityName + "']");
 
-            string HumanReadableIdentifier = EntityNode.Attributes["HumanReadableIdentifier"].Value;
+            string userFriendlyIDName = entityNode.Attributes["HumanReadableIdentifier"].Value;
 
-            return HumanReadableIdentifier;
-
+            return userFriendlyIDName;
         }
     }
 }

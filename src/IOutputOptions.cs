@@ -1,16 +1,14 @@
-
-using System.ComponentModel;
-using System.Collections.Generic;
-
 namespace CloudCopy
 {
-    interface IOutputOptions
+    using System.Collections.Generic;
+    using System.ComponentModel;
+
+    public interface IOutputOptions
     {
-        public string sortAttribute{get;set;}
+        public string SortAttribute { get; set; }
 
-        public ListSortDirection sortDirection{get;set;}
+        public ListSortDirection SortDirection { get; set; }
 
-        public List<string> outputFields{get;set;}
+        public List<string> OutputFields { get; set; }
     }
-
 }
