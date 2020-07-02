@@ -87,7 +87,7 @@ namespace CloudCopy
 
                 responseMessage.EnsureSuccessStatusCode();
 
-                content = await responseMessage.Content.ReadAsStringAsync();
+                await responseMessage.Content.ReadAsStringAsync();
             }
             catch (Exception ex)
             {

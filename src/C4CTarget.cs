@@ -4,8 +4,8 @@ namespace CloudCopy
 
     public class C4CTarget : IRemoteResource
     {
-        private string entityObjectID;
-        private string entityID;
+        private readonly string entityObjectID;
+        private readonly string entityID;
         private string typeCode = "10001";
         private IC4CEntityMapper entityMapper;
         private IC4CQueryClient queryClient;

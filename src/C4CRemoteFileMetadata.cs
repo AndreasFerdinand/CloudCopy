@@ -37,8 +37,6 @@ namespace CloudCopy
 
             xmlDoc.LoadXml(metadataXML);
 
-            XmlElement root = xmlDoc.DocumentElement;
-
             this.fileXmlRootNode = xmlDoc.SelectSingleNode("//default:entry", this.xmlNamespaceManager);
 
             this.ParseProperties();

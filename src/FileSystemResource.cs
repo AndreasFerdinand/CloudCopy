@@ -7,7 +7,7 @@ namespace CloudCopy
 
     public class FileSystemResource : ILocalResource
     {
-        private string filePath;
+        private readonly string filePath;
 
         public FileSystemResource(string filePath)
         {
