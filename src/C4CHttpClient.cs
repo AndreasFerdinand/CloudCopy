@@ -110,7 +110,7 @@ namespace CloudCopy
             }
 
             // read back file metadata
-            string metadataRequestUri = metadataUri + "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode";
+            string metadataRequestUri = metadataUri + "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode,LastUpdatedOn";
             responseMessage = await this.httpClient.GetAsync(metadataRequestUri);
 
             content = await responseMessage.Content.ReadAsStringAsync();
