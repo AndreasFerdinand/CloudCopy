@@ -4,7 +4,12 @@ namespace CloudCopy
 
     public class TargetFactory
     {
-        public static IRemoteResource CreateC4CTarget(string entityName, string entityObjectID, string typeCode = "10001")
+        public static IRemoteResource CreateC4CTarget(string entityName, string entityObjectID)
+        {
+            return CreateC4CTarget(entityName, entityObjectID, "10001");
+        }
+
+        public static IRemoteResource CreateC4CTarget(string entityName, string entityObjectID, string typeCode)
         {
             IC4CEntityMapper c4cEntityMapper = new C4CEntityMapper(entityName);
 
@@ -17,7 +22,12 @@ namespace CloudCopy
             return c4cTarget;
         }
 
-        public static IRemoteResource CreateC4CTarget(string entityName, string entityID, IC4CQueryClient queryClient, string typeCode = "10001")
+        public static IRemoteResource CreateC4CTarget(string entityName, string entityID, IC4CQueryClient queryClient)
+        {
+            return CreateC4CTarget(entityName, entityID, queryClient, "10001");
+        }
+
+        public static IRemoteResource CreateC4CTarget(string entityName, string entityID, IC4CQueryClient queryClient, string typeCode)
         {
             IC4CEntityMapper c4cEntityMapper = new C4CEntityMapper(entityName);
 

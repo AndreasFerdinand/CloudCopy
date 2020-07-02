@@ -62,7 +62,7 @@ namespace CloudCopy
 
         public async Task<IRemoteFileMetadata> UploadFileAsync(ILocalResource source, IRemoteResource target)
         {
-            await this.FetchCsrfTokenAsync();
+            await this.FetchCsrfTokenAsync().ConfigureAwait(false);
 
             HttpResponseMessage responseMessage;
             string content;
@@ -172,7 +172,7 @@ namespace CloudCopy
 
         private async Task<string> FetchCsrfTokenAsync()
         {
-            await semaphoreSlim.WaitAsync();
+            await semaphoreSlim.WaitAsync().ConfigureAwait(false);
 
             HttpResponseMessage responseMessage;
 
