@@ -1,6 +1,7 @@
 # CloudCopy - A command-line tool to manage attachments in SAP Cloud for Customer
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cd9db6880b7b4ee5885ae7726b626c98)](https://www.codacy.com/manual/AndreasFerdinand/CloudCopy?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AndreasFerdinand/CloudCopy&amp;utm_campaign=Badge_Grade)
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Tired of manually uploading a bunch of files to your service request in C4C? Or do you just need to download all files, attached to a Contact? Try CloudCopy, it’s your swiss army knife for managing attachments in SAP Cloud 4 Customer. Watch the screencast, to see, how CloudCopy can help you to improve your service process. 
 
