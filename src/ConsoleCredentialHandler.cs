@@ -2,6 +2,7 @@ namespace CloudCopy
 {
     using System;
     using System.Net;
+    using System.Text;
 
     public class ConsoleCredentialHandler : INetworkCredentialHandler
     {
@@ -27,17 +28,16 @@ namespace CloudCopy
             }
 
             Console.Write("Password: ");
-            string password = this.ReadPassword();
+            string password = ConsoleCredentialHandler.ReadPassword();
 
             Console.WriteLine("");
 
             return new NetworkCredential(this.Username, password);
         }
 
-        private string ReadPassword()
+        private static string ReadPassword()
         {
-            // https://stackoverflow.com/questions/23433980/c-sharp-console-hide-the-input-from-console-window-while-typing
-            string password = null;
+            StringBuilder stringBuilder = new StringBuilder();
 
             while (true)
             {
@@ -48,10 +48,10 @@ namespace CloudCopy
                     break;
                 }
 
-                password += key.KeyChar;
+                stringBuilder.Append(key.KeyChar);
             }
 
-            return password;
+            return stringBuilder.ToString();
         }
     }
 }

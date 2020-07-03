@@ -6,8 +6,8 @@ namespace CloudCopy
 
     public class C4CRemoteFileMetadata : IRemoteFileMetadata, IFormattable
     {
-        private XmlNode fileXmlRootNode;
-        private XmlNamespaceManager xmlNamespaceManager;
+        private readonly XmlNode fileXmlRootNode;
+        private readonly XmlNamespaceManager xmlNamespaceManager;
         private string filename;
         private string uuid;
         private string mimeType;
@@ -86,7 +86,7 @@ namespace CloudCopy
 
             if (objectIDNode == null)
             {
-                throw new Exception("Property " + propertyName + " not found");
+                throw new C4CClientException("Property " + propertyName + " not found");
             }
 
             propertyValue = objectIDNode.InnerText;
@@ -150,13 +150,6 @@ namespace CloudCopy
             {
                 this.DownloadURI = new Uri(this.GetProperty("DocumentLink"));
             }
-        }
-
-        private string ReplaceHost(string original, string newHostName)
-        {
-            var builder = new UriBuilder(original);
-            builder.Host = newHostName;
-            return builder.Uri.ToString();
         }
     }
 }

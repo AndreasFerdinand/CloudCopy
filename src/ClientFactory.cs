@@ -16,9 +16,9 @@ namespace CloudCopy
             return this.CreateC4CHttpClient(hostname, networkCredentialHandler.GetCredentials());
         }
 
-        public string GetBaseEndpointFromHostname(string hostname)
+        public static string GetBaseEndpointFromHostname(string hostname)
         {
-            // "https://myXXXXXX.crm.ondemand.com/sap/c4c/odata/v1/c4codataapi/";
+            // Uri Example: "https://myXXXXXX.crm.ondemand.com/sap/c4c/odata/v1/c4codataapi/";
             return "https://" + hostname + "/sap/c4c/odata/v1/c4codataapi/";
         }
 
@@ -26,7 +26,7 @@ namespace CloudCopy
         {
             C4CHttpClient cloudClient = new C4CHttpClient();
 
-            Uri baseEndpoint = new Uri(this.GetBaseEndpointFromHostname(hostname));
+            Uri baseEndpoint = new Uri(ClientFactory.GetBaseEndpointFromHostname(hostname));
 
             CredentialCache credentialCache = new CredentialCache();
 

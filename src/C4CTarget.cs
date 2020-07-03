@@ -8,7 +8,7 @@ namespace CloudCopy
         private readonly string entityID;
         private string typeCode = "10001";
         private IC4CEntityMapper entityMapper;
-        private IC4CQueryClient queryClient;
+        private readonly IC4CQueryClient queryClient;
 
         public C4CTarget(string entityObjectID)
         {

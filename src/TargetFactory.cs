@@ -2,7 +2,7 @@ namespace CloudCopy
 {
     using System;
 
-    public class TargetFactory
+    public static class TargetFactory
     {
         public static IRemoteResource CreateC4CTarget(string entityName, string entityObjectID)
         {

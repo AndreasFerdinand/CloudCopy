@@ -66,9 +66,9 @@ namespace CloudCopy
                 node = root.SelectSingleNode("Password");
                 this.Password = node.InnerText;
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception("Cannot read credential file " + this.Filename);
+                throw new FileProcessingError(this.Filename, ex);
             }
         }
     }
