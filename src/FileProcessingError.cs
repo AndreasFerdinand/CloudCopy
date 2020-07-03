@@ -9,7 +9,6 @@ namespace CloudCopy
         private string filename;
 
         public FileProcessingError()
-           : base()
         {
         }
 
