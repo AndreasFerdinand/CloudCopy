@@ -310,6 +310,8 @@ namespace CloudCopy
                 {
                     TypeCode = element;
                     overrideDefaultTypeCode = false;
+
+                    continue;
                 }
 
                 if (element == "-s")
@@ -322,6 +324,8 @@ namespace CloudCopy
                 if (element == "-C")
                 {
                     overrideDefaultTypeCode = true;
+
+                    continue;
                 }
 
                 Files2Upload.AddRange(getFiles(element));
