@@ -6,7 +6,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class Program
+    public static class Program
     {
         public static int Main(string[] args)
         {

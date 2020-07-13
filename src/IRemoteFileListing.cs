@@ -2,7 +2,7 @@ namespace CloudCopy
 {
     using System.Collections.Generic;
 
-    public interface IRemoteFileListing<T> : IEnumerable<T>
+    public interface IRemoteFileListing<out T> : IEnumerable<T>
     {
         void ListFiles();
 

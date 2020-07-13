@@ -5,7 +5,7 @@ namespace CloudCopy
 
     public class C4CEntityMapper : IC4CEntityMapper
     {
-        private string entityName;
+        private readonly string entityName;
 
         public C4CEntityMapper(string entityName)
         {

@@ -79,6 +79,7 @@ namespace CloudCopy
             }
             else if (outputOptions.SortAttribute == "FilenameExtension")
             {
+                #pragma warning disable S1449
                 if (outputOptions.SortDirection == ListSortDirection.Ascending)
                 {
                     this.remoteFileMetadata.Sort((x, y) => Path.GetExtension(x.Filename).CompareTo(Path.GetExtension(y.Filename)));
@@ -87,6 +88,7 @@ namespace CloudCopy
                 {
                     this.remoteFileMetadata.Sort((x, y) => Path.GetExtension(y.Filename).CompareTo(Path.GetExtension(x.Filename)));
                 }
+                #pragma warning restore S1449
             }
             else
             {
@@ -121,7 +123,6 @@ namespace CloudCopy
                     filename2Display = "'" + filename2Display + "'";
                 }
 
-                // Console.WriteLine(File.ToString("FD"));
                 Console.WriteLine("{0} {1} {2} {3}", categoryCodeID, file.UUID, file.MimeType.PadRight(longestMimeType), filename2Display);
             }
         }

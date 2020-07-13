@@ -4,7 +4,7 @@ namespace CloudCopy
     using System.Runtime.Serialization;
 
     [Serializable]
-    internal class FileProcessingError : Exception
+    public class FileProcessingError : Exception
     {
         private string filename;
 

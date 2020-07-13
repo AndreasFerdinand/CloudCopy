@@ -8,21 +8,21 @@ namespace CloudCopy
     {
         public C4CHttpClient CreateC4CHttpClient(string hostname, string username, string password)
         {
-            return this.CreateC4CHttpClient(hostname, new NetworkCredential(username, password));
+            return ClientFactory.CreateC4CHttpClient(hostname, new NetworkCredential(username, password));
         }
 
         public C4CHttpClient CreateC4CHttpClient(string hostname, INetworkCredentialHandler networkCredentialHandler)
         {
-            return this.CreateC4CHttpClient(hostname, networkCredentialHandler.GetCredentials());
+            return ClientFactory.CreateC4CHttpClient(hostname, networkCredentialHandler.GetCredentials());
         }
 
         public static string GetBaseEndpointFromHostname(string hostname)
         {
-            // Uri Example: "https://myXXXXXX.crm.ondemand.com/sap/c4c/odata/v1/c4codataapi/";
+            // Uri Example: "https://myXXXXXX.crm.ondemand.com/sap/c4c/odata/v1/c4codataapi/"
             return "https://" + hostname + "/sap/c4c/odata/v1/c4codataapi/";
         }
 
-        private C4CHttpClient CreateC4CHttpClient(string hostname, NetworkCredential networkCredential)
+        private static C4CHttpClient CreateC4CHttpClient(string hostname, NetworkCredential networkCredential)
         {
             C4CHttpClient cloudClient = new C4CHttpClient();
 
