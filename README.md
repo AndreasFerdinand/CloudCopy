@@ -2,7 +2,7 @@
 
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cd9db6880b7b4ee5885ae7726b626c98)](https://www.codacy.com/manual/AndreasFerdinand/CloudCopy?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AndreasFerdinand/CloudCopy&amp;utm_campaign=Badge_Grade)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Latest Release](https://img.shields.io/github/v/tag/AndreasFerdinand/CloudCopy?label=latest+release&sort=semver)](https://github.com/AndreasFerdinand/CloudCopy/releases)
+[![Latest Release](https://img.shields.io/github/v/tag/AndreasFerdinand/CloudCopy?label=latest+release&sort=semver)](https://github.com/AndreasFerdinand/CloudCopy/releases/latest)
 [![Platform Support](https://img.shields.io/badge/platform-win--64%20%7C%20linux--64-brightgreen)](https://github.com/AndreasFerdinand/CloudCopy/releases)
 
 Tired of manually uploading a bunch of files to your service request in C4C? Or do you just need to download all files, attached to a Contact? Try CloudCopy, it’s your swiss army knife for managing attachments in SAP Cloud 4 Customer. Watch the screencast, to see, how CloudCopy can help you to improve your service process. 
@@ -59,11 +59,11 @@ To install CloudCopy (latest development release) use, the following commands. T
 
 ```bash
 $ mkdir CloudCopy && cd CloudCopy
-$ curl -LsS https://github.com/AndreasFerdinand/CloudCopy/releases/download/v0.3-beta/CloudCopy-v0.3-beta-linux-x64.tar.gz | tar xzv
+$ curl -LsS https://github.com/AndreasFerdinand/CloudCopy/releases/download/v0.4/CloudCopy-0.4-linux-x64.tar.gz | tar xzv
 ```
 
 ### Windows
-Just download and extract the file `CloudCopy-win-<version>.x64.zip` from the the release-page and use the executable `CloudCopy.exe`.
+Just download and extract the file `CloudCopy-0.4-win-x64.zip` from the the release-page and use the executable `CloudCopy.exe`.
 
 ## Supported Entities
 Currently the following entities are supported:
