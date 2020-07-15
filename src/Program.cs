@@ -12,7 +12,7 @@
         {
             var cloudCopyMainApp = new CloudCopyMainApp();
 
-            int result = cloudCopyMainApp.run(args).Result;
+            int result = cloudCopyMainApp.Run(args).Result;
 
             return result;
         }
