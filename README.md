@@ -55,7 +55,7 @@ CloudCopy upload -C 10011 product.png Product:#10000483
 
 ## Installing
 ### Linux
-To install CloudCopy (latest development release) use, the following commands. To run it, use `./CloudCopy`.
+To install CloudCopy use, the following commands. To run it, use `./CloudCopy`.
 
 ```bash
 $ mkdir CloudCopy && cd CloudCopy
