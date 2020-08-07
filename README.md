@@ -136,3 +136,15 @@ It is not recommended to use the file, since the credentials are stored unencryp
 	<Password>password</Password>
 </CloudCopy>
 ```
+
+## C4C User Configuration
+CloudCopy uses the OData service provided by C4C. To access it, an application user or a technical (aka integration) user is needed.
+
+### Creating a technical user
+1) Create a `Communication Systems` (Administrator \ General Settings \ Integration \ Communication Systems)
+2) Define a `Communication Arrangements` (Administrator \ General Settings \ Integration \ Communication Arrangements)
+   - use communication scenario `OData Services for Business Objects`
+   - use `Basic Authentication` as authentication method
+   - specify a password (username is preset by C4C)
+   - assign the required OData services
+  
