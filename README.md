@@ -137,6 +137,11 @@ It is not recommended to use the file, since the credentials are stored unencryp
 </CloudCopy>
 ```
 
+### Set recommended file permissions (linux)
+```bash
+chmod 600 ~/.local/share/CloudCopy/default.xml
+```
+
 ## C4C User Configuration
 CloudCopy uses the OData service provided by C4C. To access it, an application user or a technical (aka integration) user is needed.
 
