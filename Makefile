@@ -10,12 +10,14 @@ linux:
 	echo "$(version)-$(linuxtarget)" > VersionName
 	mkdir -p releases
 	dotnet publish src/ -c release -r $(linuxtarget) --self-contained
+	cp LICENSE src/bin/release/netcoreapp3.1/$(linuxtarget)/publish/
 	cd src/bin/release/netcoreapp3.1/$(linuxtarget)/publish/ && tar -cvzf ../../../../../../releases/CloudCopy-$(version)-$(linuxtarget).tar.gz *
 	
 windows:
 	echo "$(version)-$(windowstarget)" > VersionName
 	mkdir -p releases
 	dotnet publish src/ -c release -r $(windowstarget) --self-contained
+	cp LICENSE src/bin/release/netcoreapp3.1/$(windowstarget)/publish/
 	cd src/bin/release/netcoreapp3.1/$(windowstarget)/publish/ && zip ../../../../../../releases/CloudCopy-$(version)-$(windowstarget).zip *
 
 clean:
