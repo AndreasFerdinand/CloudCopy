@@ -44,7 +44,7 @@ namespace CloudCopy
 
             try
             {
-                responseMessage = await this.httpClient.GetAsync(this.httpClient.BaseAddress.ToString() + sourceSubPath + query);
+                responseMessage = await this.httpClient.GetAsync(sourceSubPath + query);
 
                 responseMessage.EnsureSuccessStatusCode();
             }
@@ -73,7 +73,7 @@ namespace CloudCopy
             {
                 var request = new HttpRequestMessage();
 
-                request.RequestUri = new Uri(this.httpClient.BaseAddress.ToString() + subPath);
+                request.RequestUri = new Uri(subPath, UriKind.Relative);
                 request.Method = System.Net.Http.HttpMethod.Post;
                 request.Headers.Add("x-csrf-token", this.CSRFToken);
                 request.Headers.Add("Accept", "application/xml");
@@ -134,7 +134,7 @@ namespace CloudCopy
                 var request = new HttpRequestMessage();
 
                 request.Method = System.Net.Http.HttpMethod.Get;
-                request.RequestUri = new Uri(this.httpClient.BaseAddress.ToString() + collectionName + "?$filter=" + userFriendlyIDName + " eq '" + userFriendlyId + "'&$select=ObjectID");
+                request.RequestUri = new Uri(collectionName + "?$filter=" + userFriendlyIDName + " eq '" + userFriendlyId + "'&$select=ObjectID",UriKind.Relative);
 
                 request.Headers.Add("Accept", "application/xml");
 
