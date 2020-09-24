@@ -65,6 +65,22 @@ $ curl -LsS https://github.com/AndreasFerdinand/CloudCopy/releases/download/v0.4
 ### Windows
 Just download and extract the file `CloudCopy-0.4-win-x64.zip` from the the release-page and use the executable `CloudCopy.exe`.
 
+## Build from Source
+### Linux
+If you run Linux, you can use the Makefile to build the binaries. Since the source is based on .NET Core you have to install the [.NET Core SDK](https://docs.microsoft.com/en-us/dotnet/core/install/linux). Additionally you need to create the `Version`-file in the root directory which has to include the version number of your build. To build the binaries for windows and linux use the following two commands. To build platform specific binaries you can use the target 'windows' or 'linux' for the make command.
+
+```bash
+echo "v.1.2.3.4" > Version
+make
+```
+
+### Windows
+To build the binaries on windows, the [.NET Code SDK](https://docs.microsoft.com/en-us/dotnet/core/install/windows) is needed too. First you have to create the `VersionName`-file in the root directory which has to contain the version number. Afterwards navigate to the `src` directory and use the following command to build the binaries for windows:
+
+```bat
+dotnet build
+```
+
 ## Supported Entities
 Currently the following entities are supported:
 
@@ -120,3 +136,20 @@ It is not recommended to use the file, since the credentials are stored unencryp
 	<Password>password</Password>
 </CloudCopy>
 ```
+
+### Set recommended file permissions (linux)
+```bash
+chmod 600 ~/.local/share/CloudCopy/default.xml
+```
+
+## C4C User Configuration
+CloudCopy uses the OData service provided by C4C. To access it, an application user or a technical (aka integration) user is needed.
+
+### Creating a technical user
+1) Create a `Communication Systems` (Administrator \ General Settings \ Integration \ Communication Systems)
+2) Define a `Communication Arrangements` (Administrator \ General Settings \ Integration \ Communication Arrangements)
+   - use communication scenario `OData Services for Business Objects`
+   - use `Basic Authentication` as authentication method
+   - specify a password (username is preset by C4C)
+   - assign the required OData services
+  
