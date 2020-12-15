@@ -75,7 +75,7 @@ make
 ```
 
 ### Windows
-To build the binaries on windows, the [.NET Code SDK](https://docs.microsoft.com/en-us/dotnet/core/install/windows) is needed too. First you have to create the `VersionName`-file in the root directory which has to contain the version number. Afterwards navigate to the `src` directory and use the following command to build the binaries for windows:
+To build the binaries on windows, the [.NET Core SDK](https://docs.microsoft.com/en-us/dotnet/core/install/windows) is needed too. First you have to create the `VersionName`-file in the root directory which has to contain the version number. Afterwards navigate to the `src` directory and use the following command to build the binaries for windows:
 
 ```bat
 dotnet build
