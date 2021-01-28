@@ -24,7 +24,7 @@ namespace CloudCopy
 
         public string GetNameOfUserFriendlyID()
         {
-            Stream entityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("CloudCopy.EntityMapping.xml");
+            Stream entityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LibCloudCopy.EntityMapping.xml");
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(entityMappingStream);
