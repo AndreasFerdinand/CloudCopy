@@ -13,7 +13,7 @@ namespace CloudCopy
     public class C4CHttpClient : IClient, IC4CQueryClient
     {
         private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
-        private HttpClient httpClient;
+        protected HttpClient httpClient;
         private string CSRFToken;
 
         public async Task DownloadFileAsync(IRemoteFileMetadata source, ILocalResource target)
@@ -123,6 +123,11 @@ namespace CloudCopy
         public void SetHttpClient(HttpClient httpClient)
         {
             this.httpClient = httpClient;
+        }
+
+        public HttpClient GetHttpClient()
+        {
+            return this.httpClient;
         }
 
         public async Task<string> GetObjectIDFromUserFriendlyId(string collectionName, string userFriendlyId, string userFriendlyIDName)
