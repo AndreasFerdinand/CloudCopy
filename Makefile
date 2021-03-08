@@ -26,7 +26,7 @@ lib-windows:
 	mkdir -p releases
 	dotnet publish LibCloudCopy/src/ -c release -r $(windowstarget) --self-contained
 	cp LICENSE LibCloudCopy/src/bin/release/$(dotnetrelease)/$(windowstarget)/publish/
-	cd LibCloudCopy/src/bin/release/$(dotnetrelease)/$(windowstarget)/publish/ && tar -cvzf ../../../../../../../releases/LibCloudCopy-$(version)-$(windowstarget).tar.gz *
+	cd LibCloudCopy/src/bin/release/$(dotnetrelease)/$(windowstarget)/publish/ && zip ../../../../../../../releases/LibCloudCopy-$(version)-$(windowstarget).zip *
 
 windows:
 	echo "$(version)-$(windowstarget)" > VersionName
