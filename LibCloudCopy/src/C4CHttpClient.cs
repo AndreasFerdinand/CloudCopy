@@ -16,6 +16,22 @@ namespace CloudCopy
         protected HttpClient httpClient;
         private string CSRFToken;
 
+        public async Task<string> getXMLStringAsync(string subPath)
+        {
+            HttpResponseMessage responseMessage;
+            var request = new HttpRequestMessage();
+
+            request.RequestUri = new Uri(subPath, UriKind.Relative);
+            request.Headers.Add("Accept", "application/xml");
+            request.Method = System.Net.Http.HttpMethod.Get;
+
+            responseMessage = await this.httpClient.SendAsync(request);
+
+            responseMessage.EnsureSuccessStatusCode();
+
+            return await responseMessage.Content.ReadAsStringAsync();
+        }
+
         public async Task DownloadFileAsync(IRemoteFileMetadata source, ILocalResource target)
         {
             // await fetchCsrfTokenAsync();
