@@ -5,254 +5,46 @@ namespace CloudCopy
     using System.ComponentModel;
     using System.IO;
     using System.Linq;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.CommandLine.Invocation;
+    using System.CommandLine;
 
     public class CloudCopyMainApp
     {
-        string[] args;
-
-        public async Task<int> Run(string[] args)
-        {
-            try
-            {
-                this.args = args;
-
-                if (this.args.Length == 0)
-                {
-                    throw new Exception("Unknown command or options provided.");
-                }
-                else if (this.args.Length > 0 && (this.args[0] == "--help" || this.args[0] == "help"))
-                {
-                    PrintUsage();
-                }
-                else if (this.args[0] == "upload" && this.args.Length > 2)
-                {
-                    await this.Upload().ConfigureAwait(false);
-                }
-                else if (this.args[0] == "list" && this.args.Length > 1)
-                {
-                    await this.List().ConfigureAwait(false);
-                }
-                else if (this.args[0] == "download" && this.args.Length > 1)
-                {
-                    await this.Download().ConfigureAwait(false);
-                }
-                else if (this.args[0] == "version")
-                {
-                    PrintVersion();
-                }
-                else
-                {
-                    throw new Exception("Unknown command or options provided.");
-                }
-            }
-            catch (C4CClientException c4cException)
-            {
-                TextWriter errorWriter = Console.Error;
-
-                errorWriter.WriteLine(c4cException.Message);
-
-                if (c4cException.InnerException != null)
-                {
-                    errorWriter.WriteLine(c4cException.InnerException.Message);
-                }
-
-                return 2;
-            }
-            catch (Exception ex)
-            {
-                TextWriter errorWriter = Console.Error;
-
-                errorWriter.WriteLine(ex.Message);
-
-                return 1;
-            }
-
-            return 0;
-        }
-
-        private async Task List()
-        {
-            IClient cloudClient;
-
-            IRemoteResource directory2Read;
-
-            List<string> optionsAndParameter = new List<string>(this.args);
-
-            string targetArg = optionsAndParameter[optionsAndParameter.Count - 1];
-
-            optionsAndParameter.RemoveAt(optionsAndParameter.Count - 1); // Remove Target
-            optionsAndParameter.RemoveAt(0); // Remove "list"
-
-            TargetDescription targetDescription = new TargetDescription(targetArg);
-
-            IOutputOptions outputOptions = new OutputOptions();
-
-            string filterPattern = string.Empty;
-            bool filterByWildcard = false;
-            bool filterByRegex = false;
-
-            foreach (var element in optionsAndParameter)
-            {
-                if ((filterByWildcard || filterByRegex) && filterPattern == string.Empty)
-                {
-                    filterPattern = element;
-                    continue;
-                }
-
-                if (element == "-r") // reverse sort order
-                {
-                    outputOptions.SortDirection = ListSortDirection.Descending;
-                    continue;
-                }
-
-                if (element == "-X") // sort by file extension
-                {
-                    outputOptions.SortAttribute = "FilenameExtension";
-                    continue;
-                }
-
-                if (element == "-M") // sort by Mime type
-                {
-                    outputOptions.SortAttribute = "MimeType";
-                    continue;
-                }
-
-                if (element == "-U") // sort by UUID
-                {
-                    outputOptions.SortAttribute = "UUID";
-                    continue;
-                }
-
-                if (element == "-P") // pattern
-                {
-                    filterByWildcard = true;
-                }
-
-                if (element == "-R") // REGEX
-                {
-                    filterByRegex = true;
-                }
-            }
-
-            cloudClient = CreateCloudClient(targetDescription);
-
-            if (targetDescription.Collection == string.Empty || targetDescription.Identifier == string.Empty)
-            {
-                throw new Exception("Target collection or identifier not set.");
-            }
-
-            if (targetDescription.Identifier[0] == '#')
-            {
-                directory2Read = TargetFactory.CreateC4CTarget(targetDescription.Collection, targetDescription.Identifier.Substring(1), (C4CHttpClient)cloudClient);
-            }
-            else
-            {
-                directory2Read = TargetFactory.CreateC4CTarget(targetDescription.Collection, targetDescription.Identifier);
-            }
-
-            var fileListing = await cloudClient.GetFileListingAsync(directory2Read);
-
-            if (filterByWildcard)
-            {
-                fileListing.RemoveNotMatchingWildcard(filterPattern);
-            }
-
-            if (filterByRegex)
-            {
-                fileListing.RemoveNotMatchingRegex(filterPattern);
-            }
-
-            fileListing.ListFiles(outputOptions);
-        }
-
-        private async Task Download()
+        public async Task DownloadFiles(string Hostname ,string Username, string FilterPattern, string FilterRegex, uint Threads, OutputFormat OutputFormat, DirectoryInfo TargetDir, string TargetEntry)
         {
             C4CHttpClient cloudClient;
-            List<string> optionsAndParameter = new List<string>(this.args);
 
-            IRemoteResource directory2Read;
-
-            string filterPattern = string.Empty;
-            bool filterByWildcard = false;
-            bool filterByRegex = false;
-
-            bool overrideDefaultParallelism = false;
-            int maxParallelism = 4;
-
-            string targetArg = optionsAndParameter[optionsAndParameter.Count - 1];
-
-            optionsAndParameter.RemoveAt(optionsAndParameter.Count - 1); //Remove Target
-            optionsAndParameter.RemoveAt(0); // Remove "download"
-
-            TargetDescription targetDescription = new TargetDescription(targetArg);
-
-            foreach (var element in optionsAndParameter)
+            if ( !TargetDir.Exists )
             {
-                if ((filterByWildcard || filterByRegex) && filterPattern == string.Empty)
-                {
-                    filterPattern = element;
-                    continue;
-                }
-
-                if (overrideDefaultParallelism)
-                {
-                    maxParallelism = int.Parse(element);
-                    overrideDefaultParallelism = false;
-                }
-
-                if (element == "-P") // pattern
-                {
-                    filterByWildcard = true;
-                }
-
-                if (element == "-R") // REGEX
-                {
-                    filterByRegex = true;
-                }
-
-                if (element == "-T") // Max number of download threads
-                {
-                    overrideDefaultParallelism = true;
-                }
+                //ToDo RAISE EXCEPTION
             }
 
-            cloudClient = CreateCloudClient(targetDescription);
+            cloudClient = retrieveCloudClient(Hostname, Username);
 
-            if (targetDescription.Collection == string.Empty || targetDescription.Identifier == string.Empty)
+            var entryToRead = TargetFactory.CreateC4CTarget(TargetEntry,cloudClient);
+
+            var remoteFiles = await cloudClient.GetFileListingAsync(entryToRead);
+
+            if (!string.IsNullOrEmpty(FilterRegex))
             {
-                throw new Exception("Target collection or identifier not set.");
+                remoteFiles.RemoveNotMatchingRegex( FilterRegex );
             }
 
-            if (targetDescription.Identifier[0] == '#')
+            if (!string.IsNullOrEmpty(FilterPattern))
             {
-                directory2Read = TargetFactory.CreateC4CTarget(targetDescription.Collection, targetDescription.Identifier.Substring(1), cloudClient);
-            }
-            else
-            {
-                directory2Read = TargetFactory.CreateC4CTarget(targetDescription.Collection, targetDescription.Identifier);
+                remoteFiles.RemoveNotMatchingWildcard( FilterPattern );
             }
 
-            var fileListing = await cloudClient.GetFileListingAsync(directory2Read);
+            remoteFiles.RemoveEmptyURIs();
 
-            if (filterByWildcard)
-            {
-                fileListing.RemoveNotMatchingWildcard(filterPattern);
-            }
-
-            if (filterByRegex)
-            {
-                fileListing.RemoveNotMatchingRegex(filterPattern);
-            }
-
-            // Links cannot be downloaded and dont have a DownloadURI set
-            fileListing.RemoveEmptyURIs();
 
             var downloadTasks = new List<Task>();
-            var sSlim = new SemaphoreSlim(initialCount: maxParallelism);
+            var sSlim = new SemaphoreSlim(initialCount: (int)Threads);
 
-            foreach (var fileMetadata in fileListing)
+            foreach (var fileMetadata in remoteFiles)
             {
                 await sSlim.WaitAsync();
 
@@ -261,7 +53,7 @@ namespace CloudCopy
                     {
                         try
                         {
-                            await cloudClient.DownloadFileAsync(fileMetadata,new FileSystemResource(fileMetadata.Filename));
+                            await cloudClient.DownloadFileAsync(fileMetadata,new FileSystemResource(Path.Combine(TargetDir.FullName,fileMetadata.Filename)));
                             Console.WriteLine(fileMetadata.Filename);
                         }
                         finally
@@ -274,87 +66,176 @@ namespace CloudCopy
             await Task.WhenAll(downloadTasks);
         }
 
-        private async Task Upload()
+        public async Task ListFiles(string Hostname,string Username,OutputFormat OutputFormat,string FilterPattern,string FilterRegex,SortByOption SortBy, string TargetEntry)
         {
-            IRemoteResource target;
             C4CHttpClient cloudClient;
 
-            bool silentOptionSet = false;
-            bool overrideDefaultTypeCode = false;
-            string typeCode = "10001";
+            cloudClient = retrieveCloudClient(Hostname, Username);
 
-            List<string> optionsAndParameter = new List<string>(this.args);
+            var entryToRead = TargetFactory.CreateC4CTarget(TargetEntry,cloudClient);
 
-            string targetArg = optionsAndParameter[optionsAndParameter.Count - 1];
+            var remoteFilesX = await cloudClient.GetFileListingAsync(entryToRead);
 
-            optionsAndParameter.RemoveAt(optionsAndParameter.Count - 1); // Remove Target
-            optionsAndParameter.RemoveAt(0); // Remove "upload"
+            var remoteFiles = remoteFilesX.ToList<IRemoteFileMetadata>();
 
-            TargetDescription targetDescription = new TargetDescription(targetArg); // parseTargetDescription(TargetArg);
-
-            cloudClient = CreateCloudClient(targetDescription);
-
-            List<string> files2Upload = new List<string>();
-
-            foreach (var element in optionsAndParameter)
+            if (!string.IsNullOrEmpty(FilterRegex))
             {
-                if (overrideDefaultTypeCode)
+                remoteFiles = remoteFiles.RemoveNotMatchingRegex(x => x.Filename, FilterRegex);
+            }
+
+            if (!string.IsNullOrEmpty(FilterPattern))
+            {
+                remoteFiles = remoteFiles.RemoveNotMatchingWildcards( x => x.Filename, FilterPattern);
+            }
+
+            remoteFiles = remoteFiles.SortByProperty( SortBy );
+
+            printMetadataList( remoteFiles.ToList<IRemoteFileMetadata>(),OutputFormat);
+        }
+
+        public async Task UploadFiles(string Hostname ,string Username,string TypeCode,OutputFormat OutputFormat, string TargetEntry, List<FileInfo> FilesToUpload)
+        {
+            C4CHttpClient cloudClient;
+            IRemoteResource c4ctarget;
+            List<IRemoteFileMetadata> metadataList = new List<IRemoteFileMetadata>();
+
+            cloudClient = retrieveCloudClient(Hostname, Username);
+
+            var allFiles = ExpandWildcards( FilesToUpload );
+
+            c4ctarget = TargetFactory.CreateC4CTarget(TargetEntry,cloudClient,TypeCode);
+
+            foreach (var file in allFiles)
+            {
+                IRemoteFileMetadata fileMetadata = await cloudClient.UploadFileAsync(new FileSystemResource(file.ToString()), c4ctarget);
+
+                metadataList.Add( fileMetadata );
+            }
+
+            printMetadataList(metadataList,OutputFormat);
+
+            if (OutputFormat == OutputFormat.human)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine($"\nSuccessfully uploadad {metadataList.Count} file(s).");
+            }
+        }
+
+        private static void printMetadataList(List<IRemoteFileMetadata> metadataList, OutputFormat outputFormat)
+        {
+            if (outputFormat == OutputFormat.human)
+            {
+                foreach( var metadata in metadataList )
                 {
-                    typeCode = element;
-                    overrideDefaultTypeCode = false;
-
-                    continue;
-                }
-
-                if (element == "-s")
-                {
-                    silentOptionSet = true;
-
-                    continue;
-                }
-
-                if (element == "-C")
-                {
-                    overrideDefaultTypeCode = true;
-
-                    continue;
-                }
-
-                files2Upload.AddRange(GetFiles(element));
-            }
-
-            if (files2Upload.Count == 0)
-            {
-                // ToDo: Error?
-            }
-
-            files2Upload = files2Upload.Distinct().ToList();
-
-            if (targetDescription.Collection == string.Empty || targetDescription.Identifier == string.Empty)
-            {
-                throw new Exception("Target collection or identifier not set.");
-            }
-
-            if (targetDescription.Identifier[0] == '#')
-            {
-                target = TargetFactory.CreateC4CTarget(targetDescription.Collection,targetDescription.Identifier.Substring(1),cloudClient, typeCode);
-            }
-            else
-            {
-                target = TargetFactory.CreateC4CTarget(targetDescription.Collection,targetDescription.Identifier, typeCode);
-            }
-
-            foreach (string filePath in files2Upload)
-            {
-                var uploadTask = await cloudClient.UploadFileAsync(new FileSystemResource(filePath), target);
-
-                if (!silentOptionSet)
-                {
-                    uploadTask.PrintMetdata();
-
-                    Console.WriteLine();
+                    printKVP("Remote Filename:",metadata.Filename);
+                    printKVP("UUID:",metadata.UUID);
+                    printKVP("MimeType:",metadata.MimeType);
+                    printKVP("Metadata URI:",metadata.MetadataURI.ToString());
+                    printKVP("Download URI:",metadata.DownloadURI.ToString());
                 }
             }
+
+            if (outputFormat == OutputFormat.table)
+            {
+                foreach( var metadata in metadataList )
+                {
+                    Console.WriteLine( "{0} {1} {2}", metadata.UUID.Truncate(38).PadRight(38), metadata.MimeType.Truncate(18).PadRight(18), metadata.Filename ); 
+                }
+            }
+
+            if (outputFormat == OutputFormat.jsoncompressed)
+            {
+                Console.WriteLine( System.Text.RegularExpressions.Regex.Unescape(JsonSerializer.Serialize(metadataList) ) );
+            }
+
+            if (outputFormat == OutputFormat.json)
+            {
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = true
+
+                };
+                Console.WriteLine( System.Text.RegularExpressions.Regex.Unescape(JsonSerializer.Serialize(metadataList,options) ) );
+            }
+        }
+
+        private static void printKVP(string key, string value)
+        {
+            if ( value == null )
+            return;
+
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.Write(key.PadRight(17, ' '));
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(value);
+        }
+
+        private static C4CHttpClient retrieveCloudClient(string Hostname, string Username)
+        {
+            C4CHttpClient cloudClient;
+            INetworkCredentialHandler credentialHandler = null;
+
+            string C4CHostName = "";
+            /*
+                    HOSTNAME leer    & USERNAME leer    => Hostname von Configfile    Username von Configfile   Passwort von Configfile
+                    HOSTNAME leer    & USERNAME gefüllt => Hostname von Configfile    Username übernehmen       Passwort von Console
+                    HOSTNAME gefüllt & USERNAME leer    => Hostname übernehmen        Username von Console      Passwort von Console
+                    HOSTNAME gefüllt & USERNAME gefüllt => Hostname übernehmen        Username übernehmen       Passwort von Console
+            */
+
+            if (string.IsNullOrEmpty(Hostname) && string.IsNullOrEmpty(Username))
+            {
+                var configFileHandler = new ConfigFileHandler();
+
+                C4CHostName = configFileHandler.Hostname;
+
+                if (string.IsNullOrEmpty(configFileHandler.Password) || string.IsNullOrEmpty(configFileHandler.Username))
+                {
+                    credentialHandler = new ConsoleCredentialHandler(configFileHandler.Username);
+                }
+                else
+                {
+                    credentialHandler = configFileHandler;
+                }
+            }
+
+            if (string.IsNullOrEmpty(Hostname) && !string.IsNullOrEmpty(Username))
+            {
+                var configFileHandler = new ConfigFileHandler();
+
+                C4CHostName = configFileHandler.Hostname;
+
+                credentialHandler = new ConsoleCredentialHandler(Username);
+            }
+
+            if (!string.IsNullOrEmpty(Hostname) && string.IsNullOrEmpty(Username))
+            {
+                C4CHostName = Hostname;
+
+                credentialHandler = new ConsoleCredentialHandler();
+            }
+
+            if (!string.IsNullOrEmpty(Hostname) && !string.IsNullOrEmpty(Username))
+            {
+                C4CHostName = Hostname;
+
+                credentialHandler = new ConsoleCredentialHandler(Username);
+            }
+
+            if (string.IsNullOrEmpty(C4CHostName))
+            {
+                //TODO ERROR
+            }
+
+            if (credentialHandler == null)
+            {
+                //TODO ERROR
+            }
+
+            IClientFactory factory = new ClientFactory();
+
+            cloudClient = factory.CreateC4CHttpClient(C4CHostName, credentialHandler);
+            return cloudClient;
         }
 
         private static C4CHttpClient CreateCloudClient(TargetDescription targetDescription)
@@ -381,43 +262,22 @@ namespace CloudCopy
             return cloudClient;
         }
 
-        public static List<string> GetFiles(string path)
+        public static List<FileInfo> ExpandWildcards(List<FileInfo> files)
         {
-            string pattern = System.IO.Path.GetFileName(path);
+            List<FileInfo> ExpandedFiles = new List<FileInfo>();
 
-            string dir = path.Substring(0, path.Length - pattern.Length);
-
-            if (dir == string.Empty)
+            foreach (var file in files)
             {
-                dir = ".";
+                string dir = file.DirectoryName;
+
+                dir = dir == "" ? "." : dir;
+
+                var di = new DirectoryInfo(dir);
+
+                ExpandedFiles.AddRange( di.GetFiles(file.Name,SearchOption.TopDirectoryOnly) );
             }
 
-            List<string> files = new List<string>(System.IO.Directory.GetFiles(dir, pattern, System.IO.SearchOption.TopDirectoryOnly));
-
-            return files;
-        }
-
-        public static string GetResource(string resourceName)
-        {
-            Stream resource = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
-
-            StreamReader reader = new StreamReader(resource);
-
-            return reader.ReadToEnd();
-        }
-
-        private static void PrintUsage()
-        {
-            string helpText = GetResource("CloudCopy.Help");
-
-            helpText = helpText.Replace("~~CONFIGFILE~~", ConfigFileHandler.GetDefaultConfigFilePath());
-
-            Console.Write(helpText);
-        }
-
-        private static void PrintVersion()
-        {
-            Console.Write(GetResource("CloudCopy.VersionName"));
+            return ExpandedFiles.Distinct( new FileNameComparer()).ToList();;
         }
     }
 }

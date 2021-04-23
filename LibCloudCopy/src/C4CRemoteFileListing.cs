@@ -48,6 +48,61 @@ namespace CloudCopy
             this.ListFiles(new OutputOptions());
         }
 
+        public void SortFiles(IOutputOptions outputOptions)
+        {
+            if (this.remoteFileMetadata.Count == 0)
+            {
+                return;
+            }
+
+            if (outputOptions.SortAttribute == "UUID")
+            {
+                if (outputOptions.SortDirection == ListSortDirection.Ascending)
+                {
+                    this.remoteFileMetadata.Sort((x, y) => x.UUID.CompareTo(y.UUID));
+                }
+                else
+                {
+                    this.remoteFileMetadata.Sort((x, y) => y.UUID.CompareTo(x.UUID));
+                }
+            }
+            else if (outputOptions.SortAttribute == "MimeType")
+            {
+                if (outputOptions.SortDirection == ListSortDirection.Ascending)
+                {
+                    this.remoteFileMetadata.Sort((x, y) => x.MimeType.CompareTo(y.MimeType));
+                }
+                else
+                {
+                    this.remoteFileMetadata.Sort((x, y) => y.MimeType.CompareTo(x.MimeType));
+                }
+            }
+            else if (outputOptions.SortAttribute == "FilenameExtension")
+            {
+                #pragma warning disable S1449
+                if (outputOptions.SortDirection == ListSortDirection.Ascending)
+                {
+                    this.remoteFileMetadata.Sort((x, y) => Path.GetExtension(x.Filename).CompareTo(Path.GetExtension(y.Filename)));
+                }
+                else
+                {
+                    this.remoteFileMetadata.Sort((x, y) => Path.GetExtension(y.Filename).CompareTo(Path.GetExtension(x.Filename)));
+                }
+                #pragma warning restore S1449
+            }
+            else
+            {
+                if (outputOptions.SortDirection == ListSortDirection.Ascending)
+                {
+                    this.remoteFileMetadata.Sort((x, y) => x.Filename.CompareTo(y.Filename));
+                }
+                else
+                {
+                    this.remoteFileMetadata.Sort((x, y) => y.Filename.CompareTo(x.Filename));
+                }
+            }
+        }
+
         public void ListFiles(IOutputOptions outputOptions)
         {
             if (this.remoteFileMetadata.Count == 0)

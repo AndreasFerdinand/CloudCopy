@@ -22,6 +22,33 @@ namespace CloudCopy
             return c4cTarget;
         }
 
+        public static IRemoteResource CreateC4CTarget(string targetEntity, IC4CQueryClient queryClient)
+        { 
+            return CreateC4CTarget( targetEntity, queryClient, "");
+        }
+
+        public static IRemoteResource CreateC4CTarget(string targetEntity, IC4CQueryClient queryClient, string typeCode)
+        {
+            string[] target = targetEntity.Split(":");
+
+            if (target.Length != 2)
+            {
+                //TODO RAISE EXCEPTION
+            }
+
+            string entityName = target[0];
+            string entityID = target[1];
+
+            if ( entityID[0] == '#' )
+            {
+                return CreateC4CTarget(entityName, entityID.Substring(1), queryClient, typeCode);
+            }
+            else
+            {
+                return CreateC4CTarget(entityName, entityID, typeCode);
+            }
+        }
+
         public static IRemoteResource CreateC4CTarget(string entityName, string entityID, IC4CQueryClient queryClient)
         {
             return CreateC4CTarget(entityName, entityID, queryClient, "10001");

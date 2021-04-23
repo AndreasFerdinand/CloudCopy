@@ -58,13 +58,13 @@ namespace CloudCopy
                 XmlElement root = xmlDoc.DocumentElement;
 
                 XmlNode node = root.SelectSingleNode("Hostname");
-                this.Hostname = node.InnerText;
+                this.Hostname = node?.InnerText ?? null;
 
                 node = root.SelectSingleNode("Username");
-                this.Username = node.InnerText;
+                this.Username = node?.InnerText ?? null;
 
                 node = root.SelectSingleNode("Password");
-                this.Password = node.InnerText;
+                this.Password = node?.InnerText ?? null;
             }
             catch (Exception ex)
             {
