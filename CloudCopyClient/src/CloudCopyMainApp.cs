@@ -30,16 +30,16 @@ namespace CloudCopy
 
             if (!string.IsNullOrEmpty(FilterRegex))
             {
-                remoteFiles.RemoveNotMatchingRegex( FilterRegex );
+                remoteFiles = remoteFiles.RemoveNotMatchingRegex(x => x.Filename, FilterRegex);
             }
 
             if (!string.IsNullOrEmpty(FilterPattern))
             {
-                remoteFiles.RemoveNotMatchingWildcard( FilterPattern );
+                remoteFiles = remoteFiles.RemoveNotMatchingWildcards( x => x.Filename, FilterPattern);
             }
 
-            remoteFiles.RemoveEmptyURIs();
-
+            //we have to remove empty URIs since we need them to download the files.
+            remoteFiles = remoteFiles.Where(x => x.DownloadURI != null).ToList();
 
             var downloadTasks = new List<Task>();
             var sSlim = new SemaphoreSlim(initialCount: (int)Threads);
@@ -74,9 +74,7 @@ namespace CloudCopy
 
             var entryToRead = TargetFactory.CreateC4CTarget(TargetEntry,cloudClient);
 
-            var remoteFilesX = await cloudClient.GetFileListingAsync(entryToRead);
-
-            var remoteFiles = remoteFilesX.ToList<IRemoteFileMetadata>();
+            var remoteFiles = await cloudClient.GetFileListingAsync(entryToRead);
 
             if (!string.IsNullOrEmpty(FilterRegex))
             {
@@ -235,30 +233,6 @@ namespace CloudCopy
             IClientFactory factory = new ClientFactory();
 
             cloudClient = factory.CreateC4CHttpClient(C4CHostName, credentialHandler);
-            return cloudClient;
-        }
-
-        private static C4CHttpClient CreateCloudClient(TargetDescription targetDescription)
-        {
-            IClientFactory factory = new ClientFactory();
-
-            C4CHttpClient cloudClient;
-
-            if (targetDescription.Hostname != string.Empty && targetDescription.Username != string.Empty)
-            {
-                cloudClient = factory.CreateC4CHttpClient(targetDescription.Hostname, new ConsoleCredentialHandler(targetDescription.Username));
-            }
-            else if (targetDescription.Hostname == string.Empty && targetDescription.Username == string.Empty)
-            {
-                ConfigFileHandler configFileHandler = new ConfigFileHandler();
-
-                cloudClient = factory.CreateC4CHttpClient(configFileHandler.Hostname, configFileHandler);
-            }
-            else
-            {
-                throw new Exception("Either target username or target hostname missing.");
-            }
-
             return cloudClient;
         }
 

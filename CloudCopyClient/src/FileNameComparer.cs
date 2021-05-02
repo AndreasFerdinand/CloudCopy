@@ -7,7 +7,7 @@ namespace CloudCopy
 
     public class FileNameComparer : IEqualityComparer<FileInfo>
     {
-        public bool Equals(FileInfo? x, FileInfo? y)
+        public bool Equals(FileInfo x, FileInfo y)
         {
             if ( x == y )
             {

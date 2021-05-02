@@ -49,10 +49,11 @@ namespace CloudCopy
             }
         }
 
-        public async Task<C4CRemoteFileListing> GetFileListingAsync(IRemoteResource source)
+        public async Task<List<C4CRemoteFileMetadata>> GetFileListingAsync(IRemoteResource source)
         {
             // await fetchCsrfTokenAsync();
             HttpResponseMessage responseMessage;
+            List<C4CRemoteFileMetadata> ReceivedMetadata = new List<C4CRemoteFileMetadata>();
 
             string query = "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode,LastUpdatedOn&$orderby=Name";
 
@@ -71,9 +72,22 @@ namespace CloudCopy
 
             var content = await responseMessage.Content.ReadAsStringAsync();
 
-            C4CRemoteFileListing fileListing = new C4CRemoteFileListing(content);
 
-            return fileListing;
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(content);
+
+            XmlNamespaceManager mgr = C4CRemoteFileMetadata.GetDefaultXmlNamespaceManager();
+
+            XmlNodeList xmlNodes = xmlDoc.SelectNodes("//default:entry", mgr);
+
+            foreach (XmlNode elementNode in xmlNodes)
+            {
+                C4CRemoteFileMetadata currentFile = new C4CRemoteFileMetadata(elementNode);
+
+                ReceivedMetadata.Add(currentFile);
+            }
+
+            return ReceivedMetadata;
         }
 
         public async Task<IRemoteFileMetadata> UploadFileAsync(ILocalResource source, IRemoteResource target)

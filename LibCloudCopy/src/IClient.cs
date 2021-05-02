@@ -1,6 +1,7 @@
 namespace CloudCopy
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -10,6 +11,6 @@ namespace CloudCopy
 
         public Task DownloadFileAsync(IRemoteFileMetadata source, ILocalResource target);
 
-        Task<C4CRemoteFileListing> GetFileListingAsync(IRemoteResource source);
+        Task<List<C4CRemoteFileMetadata>> GetFileListingAsync(IRemoteResource source);
     }
 }
