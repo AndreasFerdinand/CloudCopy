@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="EntityMapping.xml" />
-    <EmbeddedResource Include="../../VersionName" />
   </ItemGroup>
 
   <ItemGroup>
