@@ -5,53 +5,46 @@
 [![Latest Release](https://img.shields.io/github/v/tag/AndreasFerdinand/CloudCopy?label=latest+release&sort=semver)](https://github.com/AndreasFerdinand/CloudCopy/releases/latest)
 [![Platform Support](https://img.shields.io/badge/platform-win--64%20%7C%20linux--64-brightgreen)](https://github.com/AndreasFerdinand/CloudCopy/releases)
 
-Tired of manually uploading a bunch of files to your service request in C4C? Or do you just need to download all files, attached to a Contact? Try CloudCopy, it’s your swiss army knife for managing attachments in SAP Cloud 4 Customer. Watch the screencast, to see, how CloudCopy can help you to improve your service process. 
+Tired of manually uploading a bunch of files to your service request in C4C? Or do you just need to download all files, attached to a Contact? Try CloudCopy, it’s your swiss army knife for managing attachments in SAP Cloud 4 Customer.
 
-![Alt text](./asciinema/CloudCopy.upload.svg)
+#Examples
 
-## Some more Examples
-
-Upload the file `details.pdf` to Contact 1000000:
+Upload all pdf files from the current directory to Contact 1000000:
 ```
-CloudCopy upload details.pdf h.maulwurf@my000000.crm.ondemand.com:Contact:#1000000
+CloudCopy upload Contact:#1000000 *.pdf
 ```
 
-List all attached files of Contact 1000000:
+List all attachments of Contact 1000000:
 ```
-CloudCopy list h.maulwurf@my000000.crm.ondemand.com:Contact:#1000000
-```
-
-The following examples require a configuration file, containing the target host and the credentials to authenticate the user.
-
-Upload all files of the current directory to ServiceRequest 2:
-```
-CloudCopy upload * ServiceRequest:#2
+CloudCopy list Contact:#1000000
 ```
 
-List all attached files of a ServiceRequest using the UUID of the Request:
+List all attachments of a ServiceRequest using the UUID of the it:
 ```
 CloudCopy list ServiceRequest:a563df71571140899b17ed8d08d8ff4b
 ```
 
-Only list jpg files of ServiceRequest 2:
+Only list jpg files of ServiceRequest 4:
 ```
-CloudCopy list -P "*.jpg" ServiceRequest:#4
+CloudCopy list -p "*.jpg" ServiceRequest:#4
 ```
 
 Download all pdf files of Contact 2000000:
 ```
-CloudCopy download -P "*.pdf" Contact:#2000000
+CloudCopy download -p "*.pdf" Contact:#2000000
 ```
 
-Download all files of ServiceRequest 333 using 6 parallel jobs:
+Download all files of ServiceRequest 333 using 6 parallel jobs to the current directory:
 ```
-CloudCopy download -T 6 ServiceRequest:#333
+CloudCopy download -t 6 ServiceRequest:#333
 ```
 
-To set a product image you have to provide the TypeCode 10011 using option `-C`:
+To set a product image you have to provide the TypeCode 10011 using option `-c`:
 ```
-CloudCopy upload -C 10011 product.png Product:#10000483
+CloudCopy upload -c 10011 product.png Product:#10000483
 ```
+
+> **ATTENTION**: The command line interface of CloudCopy has changed with release `0.5`!
 
 ## Installing
 ### Linux
@@ -64,22 +57,6 @@ $ curl -LsS https://github.com/AndreasFerdinand/CloudCopy/releases/download/v0.4
 
 ### Windows
 Just download and extract the file `CloudCopy-0.4-win-x64.zip` from the the release-page and use the executable `CloudCopy.exe`.
-
-## Build from Source
-### Linux
-If you run Linux, you can use the Makefile to build the binaries. Since the source is based on .NET Core you have to install the [.NET Core SDK](https://docs.microsoft.com/en-us/dotnet/core/install/linux). Additionally you need to create the `Version`-file in the root directory which has to include the version number of your build. To build the binaries for windows and linux use the following two commands. To build platform specific binaries you can use the target 'windows' or 'linux' for the make command.
-
-```bash
-echo "v.1.2.3.4" > Version
-make
-```
-
-### Windows
-To build the binaries on windows, the [.NET Core SDK](https://docs.microsoft.com/en-us/dotnet/core/install/windows) is needed too. First you have to create the `VersionName`-file in the root directory which has to contain the version number. Afterwards navigate to the `src` directory and use the following command to build the binaries for windows:
-
-```bat
-dotnet build
-```
 
 ## Supported Entities
 Currently the following entities are supported:
@@ -112,6 +89,21 @@ Currently the following entities are supported:
 * SocialMediaActivity
 * Tasks
 
+## Build from Source
+### Linux
+If you run Linux, you can use the Makefile to build the binaries. Since the source is based on .NET Core you have to install the [.NET Core SDK](https://docs.microsoft.com/en-us/dotnet/core/install/linux). To build the binaries of the library and the console program for windows and linux use the following commands. To build platform specific binaries use the targets provided in the Makefile.
+
+```bash
+make
+```
+
+### Windows
+To build the binaries on windows, the [.NET Core SDK](https://docs.microsoft.com/en-us/dotnet/core/install/windows) is needed too. Run the following command in the `src` subdirectory of the project (library or console program) you want to build.:
+
+```bat
+dotnet build
+```
+
 ## Configuration File
 To prevent entering the credentials and the host each time, the data can be provided through a user specific configuration file.
 
@@ -127,7 +119,12 @@ C:\Users\<user>\AppData\Local\CloudCopy\default.xml
 ```
 
 ### Format
-It is not recommended to use the file, since the credentials are stored unencrypted in it. At least be sure, to prevent other users to access the file by setting appropriate file permissions.
+The configuration file allows you to maintain the following properties:
+
+* `Hostname` only, or
+* `Hostname` and `Username`, or
+* `Hostname` and `Username` and `Password` (**not recommended**).
+
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <CloudCopy>
@@ -136,6 +133,8 @@ It is not recommended to use the file, since the credentials are stored unencryp
 	<Password>password</Password>
 </CloudCopy>
 ```
+
+Properties not maintained in the file will be requested by CloudCopy during invocation. The command line options `--Hostname` and `--Username` override the data maintained.
 
 ### Set recommended file permissions (linux)
 ```bash
@@ -153,3 +152,6 @@ CloudCopy uses the OData service provided by C4C. To access it, an application u
    - specify a password (username is preset by C4C)
    - assign the required OData services
   
+
+## LibCloudCopy
+With release `0.5` CloudCopy is split in a reusable library and the command line client.
