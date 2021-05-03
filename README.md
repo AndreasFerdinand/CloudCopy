@@ -41,7 +41,7 @@ CloudCopy download -t 6 ServiceRequest:#333
 
 To set a product image you have to provide the TypeCode 10011 using option `-c`:
 ```
-CloudCopy upload -c 10011 product.png Product:#10000483
+CloudCopy upload -c 10011 Product:#10000483 product.png
 ```
 
 > **ATTENTION**: The command line interface of CloudCopy has changed with release `0.5`!
