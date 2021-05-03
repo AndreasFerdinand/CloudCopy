@@ -135,7 +135,7 @@ namespace CloudCopy
 
             if (outputFormat == OutputFormat.table)
             {
-                foreach( var metadata in metadataList )
+                foreach(var metadata in metadataList)
                 {
                     Console.WriteLine( "{0} {1} {2}", metadata.UUID.Truncate(38).PadRight(38), metadata.MimeType.Truncate(18).PadRight(18), metadata.Filename ); 
                 }
@@ -159,8 +159,10 @@ namespace CloudCopy
 
         private static void printKVP(string key, string value)
         {
-            if ( value == null )
-            return;
+            if (value == null)
+            {
+                return;
+            }
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.Write(key.PadRight(17, ' '));

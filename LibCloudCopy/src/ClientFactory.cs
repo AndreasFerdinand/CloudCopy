@@ -6,6 +6,12 @@ namespace CloudCopy
 
     public class ClientFactory : IClientFactory
     {
+        public static string GetBaseEndpointFromHostname(string hostname)
+        {
+            // Uri Example: "https://myXXXXXX.crm.ondemand.com/sap/c4c/odata/v1/c4codataapi/"
+            return "https://" + hostname + "/sap/c4c/odata/v1/c4codataapi/";
+        }
+
         public C4CHttpClient CreateC4CHttpClient(string hostname, string username, string password)
         {
             return ClientFactory.CreateC4CHttpClient(hostname, new NetworkCredential(username, password));
@@ -14,12 +20,6 @@ namespace CloudCopy
         public C4CHttpClient CreateC4CHttpClient(string hostname, INetworkCredentialHandler networkCredentialHandler)
         {
             return ClientFactory.CreateC4CHttpClient(hostname, networkCredentialHandler.GetCredentials());
-        }
-
-        public static string GetBaseEndpointFromHostname(string hostname)
-        {
-            // Uri Example: "https://myXXXXXX.crm.ondemand.com/sap/c4c/odata/v1/c4codataapi/"
-            return "https://" + hostname + "/sap/c4c/odata/v1/c4codataapi/";
         }
 
         private static C4CHttpClient CreateC4CHttpClient(string hostname, NetworkCredential networkCredential)

@@ -23,8 +23,8 @@ namespace CloudCopy
         }
 
         public static IRemoteResource CreateC4CTarget(string targetEntity, IC4CQueryClient queryClient)
-        { 
-            return CreateC4CTarget( targetEntity, queryClient, "");
+        {
+            return CreateC4CTarget(targetEntity, queryClient, string.Empty);
         }
 
         public static IRemoteResource CreateC4CTarget(string targetEntity, IC4CQueryClient queryClient, string typeCode)
@@ -39,7 +39,7 @@ namespace CloudCopy
             string entityName = target[0];
             string entityID = target[1];
 
-            if ( entityID[0] == '#' )
+            if (entityID[0] == '#')
             {
                 return CreateC4CTarget(entityName, entityID.Substring(1), queryClient, typeCode);
             }

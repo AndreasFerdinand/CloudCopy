@@ -50,8 +50,13 @@ namespace CloudCopy
             return RemoveNotMatchingRegex(source, property, regexpattern);
         }
 
+        public static List<T> SortByProperty<T>(this List<T> source, SortByOption property )
+        {
+            return SortByProperty<T>(source, property, ListSortDirection.Ascending);
+        }
+
         // see https://stackoverflow.com/questions/27683904/how-do-i-sort-the-dynamic-list-in-c-sharp
-        public static List<T> SortByProperty<T>(this List<T> source, SortByOption property, ListSortDirection direction = ListSortDirection.Ascending )
+        public static List<T> SortByProperty<T>(this List<T> source, SortByOption property, ListSortDirection direction )
         {
             List<T> result;
 

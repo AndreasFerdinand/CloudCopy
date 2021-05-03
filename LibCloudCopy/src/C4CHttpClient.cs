@@ -12,11 +12,11 @@ namespace CloudCopy
 
     public class C4CHttpClient : IClient, IC4CQueryClient
     {
-        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
         protected HttpClient httpClient;
+        private static SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
         private string CSRFToken;
 
-        public async Task<string> getXMLStringAsync(string subPath)
+        public async Task<string> GetXMLStringAsync(string subPath)
         {
             HttpResponseMessage responseMessage;
             var request = new HttpRequestMessage();
@@ -53,7 +53,7 @@ namespace CloudCopy
         {
             // await fetchCsrfTokenAsync();
             HttpResponseMessage responseMessage;
-            List<C4CRemoteFileMetadata> ReceivedMetadata = new List<C4CRemoteFileMetadata>();
+            List<C4CRemoteFileMetadata> receivedMetadata = new List<C4CRemoteFileMetadata>();
 
             string query = "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode,LastUpdatedOn&$orderby=Name";
 
@@ -72,7 +72,6 @@ namespace CloudCopy
 
             var content = await responseMessage.Content.ReadAsStringAsync();
 
-
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(content);
 
@@ -84,10 +83,10 @@ namespace CloudCopy
             {
                 C4CRemoteFileMetadata currentFile = new C4CRemoteFileMetadata(elementNode);
 
-                ReceivedMetadata.Add(currentFile);
+                receivedMetadata.Add(currentFile);
             }
 
-            return ReceivedMetadata;
+            return receivedMetadata;
         }
 
         public async Task<IRemoteFileMetadata> UploadFileAsync(ILocalResource source, IRemoteResource target)
@@ -169,7 +168,7 @@ namespace CloudCopy
                 var request = new HttpRequestMessage();
 
                 request.Method = System.Net.Http.HttpMethod.Get;
-                request.RequestUri = new Uri(collectionName + "?$filter=" + userFriendlyIDName + " eq '" + userFriendlyId + "'&$select=ObjectID",UriKind.Relative);
+                request.RequestUri = new Uri(collectionName + "?$filter=" + userFriendlyIDName + " eq '" + userFriendlyId + "'&$select=ObjectID", UriKind.Relative);
 
                 request.Headers.Add("Accept", "application/xml");
 
