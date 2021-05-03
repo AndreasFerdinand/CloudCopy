@@ -9,12 +9,12 @@ namespace CloudCopy
     {
         public bool Equals(FileInfo x, FileInfo y)
         {
-            if ( x == y )
+            if (x == y)
             {
                 return true;
             }
 
-            if ( x == null || y == null )
+            if (x == null || y == null)
             {
                 return false;
             }

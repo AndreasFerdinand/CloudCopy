@@ -2,14 +2,11 @@ namespace CloudCopy
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.IO;
     using System.Linq;
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.CommandLine.Invocation;
-    using System.CommandLine;
 
     public class CloudCopyMainApp
     {
@@ -53,7 +50,7 @@ namespace CloudCopy
                     {
                         try
                         {
-                            await cloudClient.DownloadFileAsync(fileMetadata,new FileSystemResource(Path.Combine(TargetDir.FullName,fileMetadata.Filename)));
+                            await cloudClient.DownloadFileAsync(fileMetadata, new FileSystemResource(Path.Combine(TargetDir.FullName, fileMetadata.Filename)));
                             Console.WriteLine(fileMetadata.Filename);
                         }
                         finally
@@ -66,7 +63,7 @@ namespace CloudCopy
             await Task.WhenAll(downloadTasks);
         }
 
-        public async Task ListFiles(string Hostname,string Username,OutputFormat OutputFormat,string FilterPattern,string FilterRegex,SortByOption SortBy, string TargetEntry)
+        public async Task ListFiles(string Hostname, string Username, OutputFormat OutputFormat, string FilterPattern, string FilterRegex, SortByOption SortBy, string TargetEntry)
         {
             C4CHttpClient cloudClient;
 
@@ -88,10 +85,10 @@ namespace CloudCopy
 
             remoteFiles = remoteFiles.SortByProperty( SortBy );
 
-            printMetadataList( remoteFiles.ToList<IRemoteFileMetadata>(),OutputFormat);
+            printMetadataList(remoteFiles.ToList<IRemoteFileMetadata>(), OutputFormat);
         }
 
-        public async Task UploadFiles(string Hostname ,string Username,string TypeCode,OutputFormat OutputFormat, string TargetEntry, List<FileInfo> FilesToUpload)
+        public async Task UploadFiles(string Hostname, string Username, string TypeCode, OutputFormat OutputFormat, string TargetEntry, List<FileInfo> FilesToUpload)
         {
             C4CHttpClient cloudClient;
             IRemoteResource c4ctarget;
@@ -107,7 +104,7 @@ namespace CloudCopy
             {
                 IRemoteFileMetadata fileMetadata = await cloudClient.UploadFileAsync(new FileSystemResource(file.ToString()), c4ctarget);
 
-                metadataList.Add( fileMetadata );
+                metadataList.Add(fileMetadata);
             }
 
             printMetadataList(metadataList,OutputFormat);
@@ -123,13 +120,13 @@ namespace CloudCopy
         {
             if (outputFormat == OutputFormat.human)
             {
-                foreach( var metadata in metadataList )
+                foreach ( var metadata in metadataList )
                 {
-                    printKVP("Remote Filename:",metadata.Filename);
-                    printKVP("UUID:",metadata.UUID);
-                    printKVP("MimeType:",metadata.MimeType);
-                    printKVP("Metadata URI:",metadata.MetadataURI.ToString());
-                    printKVP("Download URI:",metadata.DownloadURI.ToString());
+                    printKVP("Remote Filename:", metadata.Filename);
+                    printKVP("UUID:", metadata.UUID);
+                    printKVP("MimeType:", metadata.MimeType);
+                    printKVP("Metadata URI:", metadata.MetadataURI.ToString());
+                    printKVP("Download URI:", metadata.DownloadURI.ToString());
                 }
             }
 
@@ -137,23 +134,23 @@ namespace CloudCopy
             {
                 foreach(var metadata in metadataList)
                 {
-                    Console.WriteLine( "{0} {1} {2}", metadata.UUID.Truncate(38).PadRight(38), metadata.MimeType.Truncate(18).PadRight(18), metadata.Filename ); 
+                    Console.WriteLine("{0} {1} {2}", metadata.UUID.Truncate(38).PadRight(38), metadata.MimeType.Truncate(18).PadRight(18), metadata.Filename); 
                 }
             }
 
             if (outputFormat == OutputFormat.jsoncompressed)
             {
-                Console.WriteLine( System.Text.RegularExpressions.Regex.Unescape(JsonSerializer.Serialize(metadataList) ) );
+                Console.WriteLine(System.Text.RegularExpressions.Regex.Unescape(JsonSerializer.Serialize(metadataList)));
             }
 
             if (outputFormat == OutputFormat.json)
             {
                 var options = new JsonSerializerOptions
                 {
-                    WriteIndented = true
-
+                    WriteIndented = true,
                 };
-                Console.WriteLine( System.Text.RegularExpressions.Regex.Unescape(JsonSerializer.Serialize(metadataList,options) ) );
+
+                Console.WriteLine(System.Text.RegularExpressions.Regex.Unescape(JsonSerializer.Serialize(metadataList,options)));
             }
         }
 
@@ -175,7 +172,7 @@ namespace CloudCopy
             C4CHttpClient cloudClient;
             INetworkCredentialHandler credentialHandler = null;
 
-            string C4CHostName = "";
+            string C4CHostName = string.Empty;
             /*
                     HOSTNAME leer    & USERNAME leer    => Hostname von Configfile    Username von Configfile   Passwort von Configfile
                     HOSTNAME leer    & USERNAME gefüllt => Hostname von Configfile    Username übernehmen       Passwort von Console
@@ -246,14 +243,14 @@ namespace CloudCopy
             {
                 string dir = file.DirectoryName;
 
-                dir = dir == "" ? "." : dir;
+                dir = dir == string.Empty ? "." : dir;
 
                 var di = new DirectoryInfo(dir);
 
-                ExpandedFiles.AddRange( di.GetFiles(file.Name,SearchOption.TopDirectoryOnly) );
+                ExpandedFiles.AddRange(di.GetFiles(file.Name,SearchOption.TopDirectoryOnly));
             }
 
-            return ExpandedFiles.Distinct( new FileNameComparer()).ToList();;
+            return ExpandedFiles.Distinct(new FileNameComparer()).ToList();
         }
     }
 }
