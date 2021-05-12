@@ -35,7 +35,7 @@ namespace CloudCopy
             return new NetworkCredential(this.Username, password);
         }
 
-        private static string ReadPassword()
+        public static string ReadPassword()
         {
             StringBuilder stringBuilder = new StringBuilder();
 

@@ -4,12 +4,62 @@ namespace CloudCopy
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class CloudCopyMainApp
     {
+        public void Configure(string Hostname, string Username, bool MaintainPassword)
+        {
+            ConfigFileHandler configFileHandler;
+
+            try
+            {
+                configFileHandler = new ConfigFileHandler();
+            }
+            catch (FileProcessingError)
+            {
+                configFileHandler = new ConfigFileHandler(true);
+            }
+
+            if (!string.IsNullOrEmpty(Hostname))
+            {
+                configFileHandler.Hostname = Hostname;
+                configFileHandler.Password = "";
+            }
+
+            if (!string.IsNullOrEmpty(Username))
+            {
+                configFileHandler.Username = Username;
+                configFileHandler.Password = "";
+            }
+
+            if (MaintainPassword)
+            {
+                if (string.IsNullOrEmpty(configFileHandler.Hostname))
+                {
+                  Console.WriteLine("Hostname must be provided from commandline or already maintained in the configuration file");
+                  //TODO ERROR
+                  Environment.Exit(1);
+                }
+                Console.WriteLine($"Please enter Password for user '{configFileHandler.Username}' to connect to host '{configFileHandler.Hostname}'");
+
+                configFileHandler.Password = ConsoleCredentialHandler.ReadPassword();
+            }
+
+            configFileHandler.SaveConfigurationFile();
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("WARNING: Password is saved unencrypted in configuration file!");
+                Console.ResetColor();
+            }
+            Console.WriteLine($"Configuration successfully written to '{configFileHandler.GetConfigFilePath()}'.");
+        }
+
         public async Task DownloadFiles(string Hostname ,string Username, string FilterPattern, string FilterRegex, uint Threads, OutputFormat OutputFormat, DirectoryInfo TargetDir, string TargetEntry)
         {
             C4CHttpClient cloudClient;
@@ -186,7 +236,7 @@ namespace CloudCopy
 
                 C4CHostName = configFileHandler.Hostname;
 
-                if (string.IsNullOrEmpty(configFileHandler.Password) || string.IsNullOrEmpty(configFileHandler.Username))
+                if (!configFileHandler.IsPasswordSet()|| string.IsNullOrEmpty(configFileHandler.Username))
                 {
                     credentialHandler = new ConsoleCredentialHandler(configFileHandler.Username);
                 }

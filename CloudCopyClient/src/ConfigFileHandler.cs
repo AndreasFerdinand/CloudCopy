@@ -3,49 +3,113 @@ namespace CloudCopy
     using System;
     using System.IO;
     using System.Net;
+    using System.Runtime.InteropServices;
+    using System.Security.Cryptography;
     using System.Xml;
+    using System.Xml.Serialization;
 
     public class ConfigFileHandler : INetworkCredentialHandler
     {
-        private string filename;
+        private string filepath;
         private string username;
         private string password;
         private string hostname;
+        private bool passwordencrypted;
 
         public ConfigFileHandler()
         {
-            this.Filename = GetDefaultConfigFilePath();
+            this.filepath = GetDefaultConfigFilePath();
 
             this.LoadData();
         }
 
-        public ConfigFileHandler(string filename)
+        public ConfigFileHandler(bool ignoreFile)
         {
-            this.Filename = filename;
+            this.filepath = GetDefaultConfigFilePath();
+        }
+
+        public ConfigFileHandler(string filepath)
+        {
+            this.filepath = filepath;
 
             this.LoadData();
         }
-
-        public string Filename { get => this.filename; set => this.filename = value; }
 
         public string Username { get => this.username; set => this.username = value; }
 
-        public string Password { get => this.password; set => this.password = value; }
+        public string Password { get => this.password; set => SetPassword(value); }
 
         public string Hostname { get => this.hostname; set => this.hostname = value; }
 
+        public bool PasswordEncrypted { get => this.passwordencrypted; set => this.passwordencrypted = value; }
+
         public static string GetDefaultConfigFilePath()
         {
-            string tempFilename = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string tempFilepath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-            tempFilename = tempFilename + Path.DirectorySeparatorChar + "CloudCopy" + Path.DirectorySeparatorChar + "default.xml";
+            tempFilepath = tempFilepath + Path.DirectorySeparatorChar + "CloudCopy" + Path.DirectorySeparatorChar + "default.xml";
 
-            return tempFilename;
+            return tempFilepath;
+        }
+
+        public string GetConfigFilePath()
+        {
+            return filepath;
         }
 
         public NetworkCredential GetCredentials()
         {
-            return new NetworkCredential(this.Username, this.Password);
+            return new NetworkCredential(this.Username, GetPassword() );
+        }
+
+        public void SaveConfigurationFile()
+        {
+            if (!PasswordEncrypted && IsPasswordSet() && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                EncryptPassword();
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(filepath));
+
+            XmlSerializer xmlSerializer = new XmlSerializer(this.GetType());
+
+            using (var fileToWrite = new FileStream(filepath, FileMode.Create, FileAccess.Write))
+            {
+                xmlSerializer.Serialize(fileToWrite, this);
+            }
+        }
+
+        public bool IsPasswordSet()
+        {
+            return !string.IsNullOrEmpty(password);
+        }
+
+        private string GetPassword()
+        {
+            return PasswordEncrypted ? DecryptPassword() : password;
+        }
+
+        private void SetPassword(string password)
+        {
+            this.password = password;
+            passwordencrypted = false;
+        }
+
+        private string DecryptPassword()
+        {
+            byte[] salt = System.Text.Encoding.Unicode.GetBytes(Hostname);
+            byte[] decryptedPassword = ProtectedData.Unprotect(Convert.FromBase64String(password), salt, DataProtectionScope.CurrentUser);
+            return System.Text.Encoding.Unicode.GetString(decryptedPassword);
+        }
+
+        private void EncryptPassword()
+        {
+            byte[] salt = System.Text.Encoding.Unicode.GetBytes(Hostname);
+            byte[] decryptedPassword = System.Text.Encoding.Unicode.GetBytes(password);
+            byte[] encryptedPassword = ProtectedData.Protect(decryptedPassword, salt, DataProtectionScope.CurrentUser);
+
+            password = Convert.ToBase64String(encryptedPassword);
+            PasswordEncrypted = true;
         }
 
         private void LoadData()
@@ -53,7 +117,7 @@ namespace CloudCopy
             try
             {
                 XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(this.Filename);
+                xmlDoc.Load(this.filepath);
 
                 XmlElement root = xmlDoc.DocumentElement;
 
@@ -64,11 +128,16 @@ namespace CloudCopy
                 this.Username = node?.InnerText ?? null;
 
                 node = root.SelectSingleNode("Password");
-                this.Password = node?.InnerText ?? null;
+                this.password = node?.InnerText ?? null;
+
+                node = root.SelectSingleNode("PasswordEncrypted");
+                var PasswordEncryptedRaw = node?.InnerText ?? null;
+
+                Boolean.TryParse(PasswordEncryptedRaw,out passwordencrypted);
             }
             catch (Exception ex)
             {
-                throw new FileProcessingError(this.Filename, ex);
+                throw new FileProcessingError(this.filepath, ex);
             }
         }
     }

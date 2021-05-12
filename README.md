@@ -107,24 +107,18 @@ dotnet build
 ## Configuration File
 To prevent entering the credentials and the host each time, the data can be provided through a user specific configuration file.
 
-### Path to the File
-Debian / Ubuntu:
-```
-~/.local/share/CloudCopy/default.xml
-```
+Properties not maintained in the file will be requested by CloudCopy during invocation. The command line options `--Hostname` and `--Username` override the data maintained.
 
-Windows:
-```
-C:\Users\<user>\AppData\Local\CloudCopy\default.xml
-```
+You can either create the file manually or using the the `configure` command of CloudCopy.
 
-### Format
+### Create it manually
 The configuration file allows you to maintain the following properties:
 
 * `Hostname` only, or
 * `Hostname` and `Username`, or
 * `Hostname` and `Username` and `Password` (**not recommended**).
 
+Example file:
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <CloudCopy>
@@ -134,9 +128,38 @@ The configuration file allows you to maintain the following properties:
 </CloudCopy>
 ```
 
-Properties not maintained in the file will be requested by CloudCopy during invocation. The command line options `--Hostname` and `--Username` override the data maintained.
+Depending on your operating system the file must by created at the following path:
 
-### Set recommended file permissions (linux)
+Windows:
+```
+C:\Users\<user>\AppData\Local\CloudCopy\default.xml
+```
+
+Debian / Ubuntu:
+```
+~/.local/share/CloudCopy/default.xml
+```
+
+### Create it using CloudCOpy
+
+If you are migrating from CloudCopy `0.4` to `0.5` (Windows only) and you are already using a configuration file with a clear text password maintained, you can easily encrypt the password using the follwoing command:
+
+```bat
+CloudCopy configure
+```
+
+To create a new configuration file use the following command and replace the Tokens `<hostname>` and `<username>`.
+
+```
+CloudCopy configure -H <hostname> -U <username> -M
+```
+
+If you use the option `-M` CloudCopy promptes you to type the password. You cannot pass it directly using a parameter!
+
+**ATTENTION**: Passwords are only encrypted on Windows machines!
+
+### Security considerations
+On Linux systems maintain the recommended file permissions to prevent other users from reading your password
 ```bash
 chmod 600 ~/.local/share/CloudCopy/default.xml
 ```

@@ -117,15 +117,32 @@
                 }
             };
 
+            var configure_command = new Command("configure", "Maintain configuratoin file")
+            {
+                new Option<string>(
+                    new string[] { "--Hostname", "-H" },
+                    description: "Specifies the hostname of the C4C target system"),
+
+                new Option<string>(
+                    new string[] { "--Username", "-U" },
+                    description: "Specifies the user used for authentication with the C4C target system"),
+
+                new Option(
+                    new string[] { "--Maintain-Password", "-M" },
+                    description: "Allows user to input the type password"),
+            };
+
             var cloudCopyMainApp = new CloudCopyMainApp();
 
             upload_command.Handler = CommandHandler.Create<string, string, string, OutputFormat, string, List<FileInfo>>(cloudCopyMainApp.UploadFiles);
             list_command.Handler = CommandHandler.Create<string, string, OutputFormat, string, string, SortByOption, string>(cloudCopyMainApp.ListFiles);
             download_command.Handler = CommandHandler.Create<string,string, string, string, uint, OutputFormat, DirectoryInfo, string>(cloudCopyMainApp.DownloadFiles);
+            configure_command.Handler = CommandHandler.Create<string,string,bool>(cloudCopyMainApp.Configure);
+
 
             var rootCommand = new RootCommand()
             {
-                download_command, upload_command, list_command,
+                download_command, upload_command, list_command, configure_command,
             };
 
             // needed to handle exceptions find details at
@@ -157,7 +174,8 @@
 
                 foreach (var ex in exa.InnerExceptions)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine(ex.Message.ToString());
+                    Console.WriteLine(ex.InnerException.ToString());
                 }
 
                 Console.ResetColor();
