@@ -111,7 +111,7 @@ Properties not maintained in the file will be requested by CloudCopy during invo
 
 You can either create the file manually or using the the `configure` command of CloudCopy.
 
-### Create it manually
+### Create it manually (not recommended)
 The configuration file allows you to maintain the following properties:
 
 * `Hostname` only, or
@@ -120,13 +120,15 @@ The configuration file allows you to maintain the following properties:
 
 Example file:
 ```xml
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<CloudCopy>
-	<Hostname>my000000.crm.ondemand.com</Hostname>
-	<Username>username</Username>
-	<Password>password</Password>
-</CloudCopy>
+<?xml version="1.0"?>
+<ConfigFileHandler xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Username>username</Username>
+  <Password>password</Password>
+  <Hostname>my000000.crm.ondemand.com</Hostname>
+</ConfigFileHandler>
 ```
+
+> **ATTENTION**: Previous CloudCopy versions use a different file format.
 
 Depending on your operating system the file must by created at the following path:
 
@@ -140,9 +142,9 @@ Debian / Ubuntu:
 ~/.local/share/CloudCopy/default.xml
 ```
 
-### Create it using CloudCOpy
+### Create it using CloudCopy
 
-If you are migrating from CloudCopy `0.4` to `0.5` (Windows only) and you are already using a configuration file with a clear text password maintained, you can easily encrypt the password using the follwoing command:
+If you are migrating from CloudCopy `0.4` to `0.5` and you are already using a configuration file the following command converts the file to the new format. On windows the clear text password will be encrypted too.
 
 ```bat
 CloudCopy configure
@@ -154,7 +156,7 @@ To create a new configuration file use the following command and replace the Tok
 CloudCopy configure -H <hostname> -U <username> -M
 ```
 
-If you use the option `-M` CloudCopy promptes you to type the password. You cannot pass it directly using a parameter!
+If you use the option `-M` CloudCopy promptes you to type the password. **It is not possible to provide the password as an argument to this option**
 
 **ATTENTION**: Passwords are only encrypted on Windows machines!
 
