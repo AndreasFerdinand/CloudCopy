@@ -14,6 +14,12 @@ namespace CloudCopy
 
         public Uri DownloadURI { get; set; }
 
+        DateTime ChangedAt { get; set; }
+
+        string CategoryCode { get; set; }
+        
+        string User { get; set; }
+
         public void PrintMetdata();
 
         public string GetProperty(string propertyName);
