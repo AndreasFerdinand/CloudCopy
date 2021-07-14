@@ -132,7 +132,7 @@
                     description: "Allows user to input the type password"),
             };
 
-            var cloudCopyMainApp = new CloudCopyMainApp();
+            var cloudCopyMainApp = new CloudCopyMainApp(new CloudClientFactory());
 
             upload_command.Handler = CommandHandler.Create<string, string, string, OutputFormat, string, List<FileInfo>>(cloudCopyMainApp.UploadFiles);
             list_command.Handler = CommandHandler.Create<string, string, OutputFormat, string, string, SortByOption, string>(cloudCopyMainApp.ListFiles);
@@ -175,7 +175,11 @@
                 foreach (var ex in exa.InnerExceptions)
                 {
                     Console.WriteLine(ex.Message.ToString());
-                    Console.WriteLine(ex.InnerException.ToString());
+
+                    if (ex.InnerException != null)
+                    {
+                        Console.WriteLine(ex.InnerException.ToString());
+                    }
                 }
 
                 Console.ResetColor();

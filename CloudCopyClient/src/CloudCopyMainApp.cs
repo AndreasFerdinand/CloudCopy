@@ -11,6 +11,13 @@ namespace CloudCopy
 
     public class CloudCopyMainApp
     {
+        private readonly ICloudClientFactory cloudClientFactory;
+
+        public CloudCopyMainApp(ICloudClientFactory cloudClientFactory)
+        {
+            this.cloudClientFactory = cloudClientFactory;
+        }
+
         public void Configure(string Hostname, string Username, bool MaintainPassword)
         {
             ConfigFileHandler configFileHandler;
@@ -40,9 +47,7 @@ namespace CloudCopy
             {
                 if (string.IsNullOrEmpty(configFileHandler.Hostname))
                 {
-                  Console.WriteLine("Hostname must be provided from commandline or already maintained in the configuration file");
-                  //TODO ERROR
-                  Environment.Exit(1);
+                    throw new CloudCopyParametrizationException("Hostname must be provided from commandline or already maintained in the configuration file");
                 }
                 Console.WriteLine($"Please enter Password for user '{configFileHandler.Username}' to connect to host '{configFileHandler.Hostname}'");
 
@@ -66,7 +71,7 @@ namespace CloudCopy
 
             if ( !TargetDir.Exists )
             {
-                //ToDo RAISE EXCEPTION
+                throw new CloudCopyParametrizationException("Target directory doesn't exist");
             }
 
             cloudClient = retrieveCloudClient(Hostname, Username);
@@ -217,72 +222,9 @@ namespace CloudCopy
             Console.WriteLine(value);
         }
 
-        private static C4CHttpClient retrieveCloudClient(string Hostname, string Username)
+        private C4CHttpClient retrieveCloudClient(string Hostname, string Username)
         {
-            C4CHttpClient cloudClient;
-            INetworkCredentialHandler credentialHandler = null;
-
-            string C4CHostName = string.Empty;
-            /*
-                    HOSTNAME leer    & USERNAME leer    => Hostname von Configfile    Username von Configfile   Passwort von Configfile
-                    HOSTNAME leer    & USERNAME gefüllt => Hostname von Configfile    Username übernehmen       Passwort von Console
-                    HOSTNAME gefüllt & USERNAME leer    => Hostname übernehmen        Username von Console      Passwort von Console
-                    HOSTNAME gefüllt & USERNAME gefüllt => Hostname übernehmen        Username übernehmen       Passwort von Console
-            */
-
-            if (string.IsNullOrEmpty(Hostname) && string.IsNullOrEmpty(Username))
-            {
-                var configFileHandler = new ConfigFileHandler();
-
-                C4CHostName = configFileHandler.Hostname;
-
-                if (!configFileHandler.IsPasswordSet()|| string.IsNullOrEmpty(configFileHandler.Username))
-                {
-                    credentialHandler = new ConsoleCredentialHandler(configFileHandler.Username);
-                }
-                else
-                {
-                    credentialHandler = configFileHandler;
-                }
-            }
-
-            if (string.IsNullOrEmpty(Hostname) && !string.IsNullOrEmpty(Username))
-            {
-                var configFileHandler = new ConfigFileHandler();
-
-                C4CHostName = configFileHandler.Hostname;
-
-                credentialHandler = new ConsoleCredentialHandler(Username);
-            }
-
-            if (!string.IsNullOrEmpty(Hostname) && string.IsNullOrEmpty(Username))
-            {
-                C4CHostName = Hostname;
-
-                credentialHandler = new ConsoleCredentialHandler();
-            }
-
-            if (!string.IsNullOrEmpty(Hostname) && !string.IsNullOrEmpty(Username))
-            {
-                C4CHostName = Hostname;
-
-                credentialHandler = new ConsoleCredentialHandler(Username);
-            }
-
-            if (string.IsNullOrEmpty(C4CHostName))
-            {
-                //TODO ERROR
-            }
-
-            if (credentialHandler == null)
-            {
-                //TODO ERROR
-            }
-
-            IClientFactory factory = new ClientFactory();
-
-            cloudClient = factory.CreateC4CHttpClient(C4CHostName, credentialHandler);
-            return cloudClient;
+            return this.cloudClientFactory.CreateCloudClient(Hostname, Username);
         }
 
         public static List<FileInfo> ExpandWildcards(List<FileInfo> files)

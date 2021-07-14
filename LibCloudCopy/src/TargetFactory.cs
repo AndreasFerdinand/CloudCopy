@@ -33,7 +33,7 @@ namespace CloudCopy
 
             if (target.Length != 2)
             {
-                //TODO RAISE EXCEPTION
+                throw new TargetEntityInvalidFormatException(targetEntity);
             }
 
             string entityName = target[0];

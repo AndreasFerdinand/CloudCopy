@@ -2,7 +2,7 @@ namespace CloudCopy
 {
     using System;
 
-    public interface IClientFactory
+    public interface IC4CFactory
     {
         public C4CHttpClient CreateC4CHttpClient(string hostname, string username, string password);
 

@@ -4,7 +4,7 @@ namespace CloudCopy
     using System.Net;
     using System.Net.Http;
 
-    public class ClientFactory : IClientFactory
+    public class C4CFactory : IC4CFactory
     {
         public static string GetBaseEndpointFromHostname(string hostname)
         {
@@ -14,19 +14,17 @@ namespace CloudCopy
 
         public C4CHttpClient CreateC4CHttpClient(string hostname, string username, string password)
         {
-            return ClientFactory.CreateC4CHttpClient(hostname, new NetworkCredential(username, password));
+            return C4CFactory.CreateC4CHttpClient(hostname, new NetworkCredential(username, password));
         }
 
         public C4CHttpClient CreateC4CHttpClient(string hostname, INetworkCredentialHandler networkCredentialHandler)
         {
-            return ClientFactory.CreateC4CHttpClient(hostname, networkCredentialHandler.GetCredentials());
+            return C4CFactory.CreateC4CHttpClient(hostname, networkCredentialHandler.GetCredentials());
         }
 
         private static C4CHttpClient CreateC4CHttpClient(string hostname, NetworkCredential networkCredential)
         {
-            C4CHttpClient cloudClient = new C4CHttpClient();
-
-            Uri baseEndpoint = new Uri(ClientFactory.GetBaseEndpointFromHostname(hostname));
+            Uri baseEndpoint = new Uri(C4CFactory.GetBaseEndpointFromHostname(hostname));
 
             CredentialCache credentialCache = new CredentialCache();
 
@@ -40,7 +38,7 @@ namespace CloudCopy
             HttpClient client = new HttpClient(clienthandler);
             client.BaseAddress = baseEndpoint;
 
-            cloudClient.SetHttpClient(client);
+            C4CHttpClient cloudClient = new C4CHttpClient(client);
 
             return cloudClient;
         }
