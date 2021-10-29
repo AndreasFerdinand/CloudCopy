@@ -23,7 +23,7 @@ namespace CloudCopy
 
         public async Task<string> GetXMLStringAsync(string subPath)
         {
-            return await GetXMLStringAsync( subPath, new CancellationToken() );
+            return await this.GetXMLStringAsync(subPath, new CancellationToken()).ConfigureAwait(false);
         }
 
         public async Task<string> GetXMLStringAsync(string subPath, CancellationToken cancellationToken)
@@ -35,7 +35,7 @@ namespace CloudCopy
             request.Headers.Add("Accept", "application/xml");
             request.Method = System.Net.Http.HttpMethod.Get;
 
-            responseMessage = await this.httpClient.SendAsync(request,cancellationToken);
+            responseMessage = await this.httpClient.SendAsync(request, cancellationToken);
 
             responseMessage.EnsureSuccessStatusCode();
 
@@ -44,7 +44,7 @@ namespace CloudCopy
 
         public async Task DownloadFileAsync(IRemoteFileMetadata source, ILocalResource target)
         {
-            await DownloadFileAsync(source, target, new CancellationToken() );
+            await this.DownloadFileAsync(source, target, new CancellationToken()).ConfigureAwait(false);
         }
 
         public async Task DownloadFileAsync(IRemoteFileMetadata source, ILocalResource target, CancellationToken cancellationToken)
@@ -66,7 +66,7 @@ namespace CloudCopy
 
         public async Task<List<C4CRemoteFileMetadata>> GetFileListingAsync(IRemoteResource source)
         {
-            return await GetFileListingAsync(source, new CancellationToken() );
+            return await this.GetFileListingAsync(source, new CancellationToken()).ConfigureAwait(false);
         }
 
         public async Task<List<C4CRemoteFileMetadata>> GetFileListingAsync(IRemoteResource source, CancellationToken cancellationToken)
@@ -111,7 +111,7 @@ namespace CloudCopy
 
         public async Task<IRemoteFileMetadata> UploadFileAsync(ILocalResource source, IRemoteResource target)
         {
-            return await UploadFileAsync(source, target, new CancellationToken() );
+            return await this.UploadFileAsync(source, target, new CancellationToken()).ConfigureAwait(false);
         }
 
         public async Task<IRemoteFileMetadata> UploadFileAsync(ILocalResource source, IRemoteResource target, CancellationToken cancellationToken)
@@ -181,7 +181,7 @@ namespace CloudCopy
 
         public async Task<string> GetObjectIDFromUserFriendlyId(string collectionName, string userFriendlyId, string userFriendlyIDName)
         {
-            return await GetObjectIDFromUserFriendlyId(collectionName,userFriendlyId,userFriendlyIDName, new CancellationToken() );
+            return await GetObjectIDFromUserFriendlyId(collectionName, userFriendlyId, userFriendlyIDName, new CancellationToken()).ConfigureAwait(false);
         }
 
         public async Task<string> GetObjectIDFromUserFriendlyId(string collectionName, string userFriendlyId, string userFriendlyIDName, CancellationToken cancellationToken)
@@ -249,7 +249,7 @@ namespace CloudCopy
                     request.Headers.Add("x-csrf-token", "fetch");
                     request.Headers.Add("Accept", "application/json");
 
-                    responseMessage = await this.httpClient.SendAsync(request,cancellationToken);
+                    responseMessage = await this.httpClient.SendAsync(request, cancellationToken);
 
                     responseMessage.EnsureSuccessStatusCode();
                 }

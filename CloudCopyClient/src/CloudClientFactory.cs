@@ -21,7 +21,7 @@ namespace CloudCopy
 
                 C4CHostName = configFileHandler.Hostname;
 
-                if (!configFileHandler.IsPasswordSet()|| string.IsNullOrEmpty(configFileHandler.Username))
+                if (!configFileHandler.IsPasswordSet() || string.IsNullOrEmpty(configFileHandler.Username))
                 {
                     credentialHandler = new ConsoleCredentialHandler(configFileHandler.Username);
                 }
@@ -70,5 +70,4 @@ namespace CloudCopy
             return cloudClient;
         }
     }
-
 }

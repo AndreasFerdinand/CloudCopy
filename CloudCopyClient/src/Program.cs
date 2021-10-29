@@ -16,33 +16,33 @@
             var download_command = new Command("download","Download files from an entry in C4C")
             {
                 new Option<string>(
-                    new string[] { "--Hostname", "-H" },
+                    new [] { "--Hostname", "-H" },
                     description: "Specifies the hostname of the C4C target system"),
 
                 new Option<string>(
-                    new string[] { "--Username", "-U" },
+                    new [] { "--Username", "-U" },
                     description: "Specifies the user used for authentication with the C4C target system"),
 
                 new Option<string>(
-                    new string[] { "--FilterPattern", "-p" },
+                    new [] { "--FilterPattern", "-p" },
                     description: "Output Format"),
 
                 new Option<string>(
-                    new string[] { "--FilterRegex", "-r" },
+                    new [] { "--FilterRegex", "-r" },
                     description: "Output Format"),
 
                 new Option<uint>(
-                    new string[] { "--Threads", "-t" },
+                    new [] { "--Threads", "-t" },
                     getDefaultValue: () => 4,
                     description: "Threads to use for parallel download"),
 
                 new Option<OutputFormat>(
-                    new string[] { "--OutputFormat", "-o" },
+                    new [] { "--OutputFormat", "-o" },
                     getDefaultValue: () => OutputFormat.human,
                     description: "Output Format"),
 
                 new Option<DirectoryInfo>(
-                    new string[] { "--TargetDir", "-d" },
+                    new [] { "--TargetDir", "-d" },
                     getDefaultValue: () => new DirectoryInfo("."),
                     description: "Target Directory where the files should be downloaded to"),
 
@@ -55,20 +55,20 @@
             var upload_command = new Command("upload", "Upload files to an entry in C4C")
             {
                 new Option<string>(
-                    new string[] { "--Hostname", "-H" },
+                    new [] { "--Hostname", "-H" },
                     description: "Specifies the hostname of the C4C target system"),
 
                 new Option<string>(
-                    new string[] { "--Username", "-U" },
+                    new [] { "--Username", "-U" },
                     description: "Specifies the user used for authentication with the C4C target system"),
 
                 new Option<string>(
-                    new string[] { "--TypeCode", "-c" },
+                    new [] { "--TypeCode", "-c" },
                     getDefaultValue: () => "10001",
                     description: "Attachment TypeCode"),
 
                 new Option<OutputFormat>(
-                    new string[] { "--OutputFormat", "-o" },
+                    new [] { "--OutputFormat", "-o" },
                     getDefaultValue: () => OutputFormat.human,
                     description: "Output Format"),
 
@@ -86,28 +86,28 @@
             var list_command = new Command("list", "List files attached to an entry in C4C")
             {
                 new Option<string>(
-                    new string[] { "--Hostname", "-H" },
+                    new [] { "--Hostname", "-H" },
                     description: "Specifies the hostname of the C4C target system"),
 
                 new Option<string>(
-                    new string[] { "--Username", "-U" },
+                    new [] { "--Username", "-U" },
                     description: "Specifies the user used for authentication with the C4C target system"),
 
                 new Option<OutputFormat>(
-                    new string[] { "--OutputFormat", "-o" },
+                    new [] { "--OutputFormat", "-o" },
                     getDefaultValue: () => OutputFormat.table,
                     description: "Output Format"),
 
                 new Option<string>(
-                    new string[] { "--FilterPattern", "-p" },
+                    new [] { "--FilterPattern", "-p" },
                     description: "Output Format"),
 
                 new Option<string>(
-                    new string[] { "--FilterRegex", "-r" },
+                    new [] { "--FilterRegex", "-r" },
                     description: "Output Format"),
 
                 new Option<SortByOption>(
-                    new string[] { "--SortBy", "-s" },
+                    new [] { "--SortBy", "-s" },
                     getDefaultValue: () => SortByOption.Filename,
                     description: "Sort file listing by"),
 
@@ -120,15 +120,15 @@
             var configure_command = new Command("configure", "Maintain configuratoin file")
             {
                 new Option<string>(
-                    new string[] { "--Hostname", "-H" },
+                    new [] { "--Hostname", "-H" },
                     description: "Specifies the hostname of the C4C target system"),
 
                 new Option<string>(
-                    new string[] { "--Username", "-U" },
+                    new [] { "--Username", "-U" },
                     description: "Specifies the user used for authentication with the C4C target system"),
 
                 new Option(
-                    new string[] { "--Maintain-Password", "-M" },
+                    new [] { "--Maintain-Password", "-M" },
                     description: "Allows user to input the type password"),
             };
 
@@ -140,14 +140,14 @@
             configure_command.Handler = CommandHandler.Create<string,string,bool>(cloudCopyMainApp.Configure);
 
 
-            var rootCommand = new RootCommand()
+            var rootCommand = new RootCommand
             {
                 download_command, upload_command, list_command, configure_command,
             };
 
             // needed to handle exceptions find details at
             // https://github.com/dotnet/command-line-api/issues/796
-            var _ = new CommandLineBuilder(rootCommand)
+            new CommandLineBuilder(rootCommand)
                 .UseVersionOption()
                 .UseHelp()
                 .UseEnvironmentVariableDirective()
@@ -174,7 +174,7 @@
 
                 foreach (var ex in exa.InnerExceptions)
                 {
-                    Console.WriteLine(ex.Message.ToString());
+                    Console.WriteLine(ex.Message);
 
                     if (ex.InnerException != null)
                     {

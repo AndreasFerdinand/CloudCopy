@@ -65,11 +65,11 @@ namespace CloudCopy
             Console.WriteLine($"Configuration successfully written to '{configFileHandler.GetConfigFilePath()}'.");
         }
 
-        public async Task DownloadFiles(string Hostname ,string Username, string FilterPattern, string FilterRegex, uint Threads, OutputFormat OutputFormat, DirectoryInfo TargetDir, string TargetEntry)
+        public async Task DownloadFiles(string Hostname, string Username, string FilterPattern, string FilterRegex, uint Threads, OutputFormat OutputFormat, DirectoryInfo TargetDir, string TargetEntry)
         {
             C4CHttpClient cloudClient;
 
-            if ( !TargetDir.Exists )
+            if (!TargetDir.Exists)
             {
                 throw new CloudCopyParametrizationException("Target directory doesn't exist");
             }
@@ -87,7 +87,7 @@ namespace CloudCopy
 
             if (!string.IsNullOrEmpty(FilterPattern))
             {
-                remoteFiles = remoteFiles.RemoveNotMatchingWildcards( x => x.Filename, FilterPattern);
+                remoteFiles = remoteFiles.RemoveNotMatchingWildcards(x => x.Filename, FilterPattern);
             }
 
             //we have to remove empty URIs since we need them to download the files.
@@ -98,7 +98,7 @@ namespace CloudCopy
 
             foreach (var fileMetadata in remoteFiles)
             {
-                await sSlim.WaitAsync();
+                await sSlim.WaitAsync().ConfigureAwait(false);
 
                 downloadTasks.Add(
                     Task.Run(async () =>
@@ -115,7 +115,7 @@ namespace CloudCopy
                     }));
             }
 
-            await Task.WhenAll(downloadTasks);
+            await Task.WhenAll(downloadTasks).ConfigureAwait(false);
         }
 
         public async Task ListFiles(string Hostname, string Username, OutputFormat OutputFormat, string FilterPattern, string FilterRegex, SortByOption SortBy, string TargetEntry)
@@ -124,7 +124,7 @@ namespace CloudCopy
 
             cloudClient = retrieveCloudClient(Hostname, Username);
 
-            var entryToRead = TargetFactory.CreateC4CTarget(TargetEntry,cloudClient);
+            var entryToRead = TargetFactory.CreateC4CTarget(TargetEntry, cloudClient);
 
             var remoteFiles = await cloudClient.GetFileListingAsync(entryToRead);
 
@@ -135,10 +135,10 @@ namespace CloudCopy
 
             if (!string.IsNullOrEmpty(FilterPattern))
             {
-                remoteFiles = remoteFiles.RemoveNotMatchingWildcards( x => x.Filename, FilterPattern);
+                remoteFiles = remoteFiles.RemoveNotMatchingWildcards(x => x.Filename, FilterPattern);
             }
 
-            remoteFiles = remoteFiles.SortByProperty( SortBy );
+            remoteFiles = remoteFiles.SortByProperty(SortBy);
 
             printMetadataList(remoteFiles.ToList<IRemoteFileMetadata>(), OutputFormat);
         }
@@ -151,9 +151,9 @@ namespace CloudCopy
 
             cloudClient = retrieveCloudClient(Hostname, Username);
 
-            var allFiles = ExpandWildcards( FilesToUpload );
+            var allFiles = ExpandWildcards(FilesToUpload);
 
-            c4ctarget = TargetFactory.CreateC4CTarget(TargetEntry,cloudClient,TypeCode);
+            c4ctarget = TargetFactory.CreateC4CTarget(TargetEntry, cloudClient, TypeCode);
 
             foreach (var file in allFiles)
             {
@@ -162,7 +162,7 @@ namespace CloudCopy
                 metadataList.Add(fileMetadata);
             }
 
-            printMetadataList(metadataList,OutputFormat);
+            printMetadataList(metadataList, OutputFormat);
 
             if (OutputFormat == OutputFormat.human)
             {
@@ -175,7 +175,7 @@ namespace CloudCopy
         {
             if (outputFormat == OutputFormat.human)
             {
-                foreach ( var metadata in metadataList )
+                foreach (var metadata in metadataList)
                 {
                     printKVP("Remote Filename:", metadata.Filename);
                     printKVP("UUID:", metadata.UUID);
@@ -187,7 +187,7 @@ namespace CloudCopy
 
             if (outputFormat == OutputFormat.table)
             {
-                foreach(var metadata in metadataList)
+                foreach (var metadata in metadataList)
                 {
                     Console.WriteLine("{0} {1} {2}", metadata.UUID.Truncate(38).PadRight(38), metadata.MimeType.Truncate(18).PadRight(18), metadata.Filename); 
                 }
@@ -205,7 +205,7 @@ namespace CloudCopy
                     WriteIndented = true,
                 };
 
-                Console.WriteLine(System.Text.RegularExpressions.Regex.Unescape(JsonSerializer.Serialize(metadataList,options)));
+                Console.WriteLine(System.Text.RegularExpressions.Regex.Unescape(JsonSerializer.Serialize(metadataList, options)));
             }
         }
 

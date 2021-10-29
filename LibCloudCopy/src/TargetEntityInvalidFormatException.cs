@@ -1,19 +1,19 @@
-using System;
-using System.Runtime.Serialization;
-
 namespace CloudCopy
 {
+    using System;
+    using System.Runtime.Serialization;
+
     [System.Serializable]
     public class TargetEntityInvalidFormatException : C4CClientException
     {
         private readonly string targetEntity;
         public string TargetEntity => targetEntity;
 
-        public TargetEntityInvalidFormatException() : base()
+        public TargetEntityInvalidFormatException()
         {
         }
 
-        public TargetEntityInvalidFormatException(string targetEntity) : base(String.Format("{0} is not a valid TargetEntity format", targetEntity))
+        public TargetEntityInvalidFormatException(string targetEntity) : base(string.Format("{0} is not a valid TargetEntity format", targetEntity))
         {
             this.targetEntity = targetEntity;
         }
