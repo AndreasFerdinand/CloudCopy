@@ -181,7 +181,15 @@ namespace CloudCopy
                     printKVP("UUID:", metadata.UUID);
                     printKVP("MimeType:", metadata.MimeType);
                     printKVP("Metadata URI:", metadata.MetadataURI.ToString());
-                    printKVP("Download URI:", metadata.DownloadURI.ToString());
+
+                    if (metadata.DownloadURI == null)
+                    {
+                        printKVP("Download URI:", "[download URI unknown]");
+                    }
+                    else
+                    {
+                        printKVP("Download URI:", metadata.DownloadURI.ToString());
+                    }
                 }
             }
 
