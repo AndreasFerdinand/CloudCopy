@@ -39,7 +39,7 @@ namespace CloudCopy
 
             responseMessage.EnsureSuccessStatusCode();
 
-            return await responseMessage.Content.ReadAsStringAsync();
+            return await responseMessage.Content.ReadAsStringAsync(cancellationToken);
         }
 
         public async Task DownloadFileAsync(IRemoteFileMetadata source, ILocalResource target)
@@ -77,7 +77,7 @@ namespace CloudCopy
 
             string query = "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode,LastUpdatedOn&$orderby=Name";
 
-            string sourceSubPath = await source.GetSubPathAsync();
+            string sourceSubPath = await source.GetSubPathAsync(cancellationToken);
 
             try
             {
@@ -90,7 +90,7 @@ namespace CloudCopy
                 throw new C4CClientException("Error occured while receiving file listing", ex);
             }
 
-            var content = await responseMessage.Content.ReadAsStringAsync();
+            var content = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(content);
@@ -121,7 +121,7 @@ namespace CloudCopy
             HttpResponseMessage responseMessage;
             string content;
 
-            var subPath = await target.GetSubPathAsync();
+            var subPath = await target.GetSubPathAsync(cancellationToken);
 
             try
             {
@@ -141,7 +141,7 @@ namespace CloudCopy
 
                 responseMessage.EnsureSuccessStatusCode();
 
-                await responseMessage.Content.ReadAsStringAsync();
+                await responseMessage.Content.ReadAsStringAsync(cancellationToken);
             }
             catch (Exception ex)
             {
@@ -167,7 +167,7 @@ namespace CloudCopy
             string metadataRequestUri = metadataUri + "?$select=UUID,MimeType,Name,DocumentLink,CategoryCode,LastUpdatedOn";
             responseMessage = await this.httpClient.GetAsync(metadataRequestUri, cancellationToken);
 
-            content = await responseMessage.Content.ReadAsStringAsync();
+            content = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
 
             C4CRemoteFileMetadata metadata = new C4CRemoteFileMetadata(content);
 
@@ -197,7 +197,7 @@ namespace CloudCopy
 
                 request.Headers.Add("Accept", "application/xml");
 
-                responseMessage = await this.httpClient.SendAsync(request);
+                responseMessage = await this.httpClient.SendAsync(request, cancellationToken);
 
                 responseMessage.EnsureSuccessStatusCode();
             }
@@ -206,7 +206,7 @@ namespace CloudCopy
                 throw new C4CClientException("An error occured while requesting Object ID from User-friendly ID", ex);
             }
 
-            var content = await responseMessage.Content.ReadAsStringAsync();
+            var content = await responseMessage.Content.ReadAsStringAsync(cancellationToken);
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(content);
@@ -231,7 +231,7 @@ namespace CloudCopy
 
         private async Task<string> FetchCsrfTokenAsync(CancellationToken cancellationToken)
         {
-            await semaphoreSlim.WaitAsync().ConfigureAwait(false);
+            await semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
 
             HttpResponseMessage responseMessage;
 

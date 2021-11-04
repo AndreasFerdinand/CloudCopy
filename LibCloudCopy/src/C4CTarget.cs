@@ -1,5 +1,6 @@
 namespace CloudCopy
 {
+    using System.Threading;
     using System.Threading.Tasks;
 
     public class C4CTarget : IRemoteResource
@@ -30,11 +31,16 @@ namespace CloudCopy
 
         public async Task<string> GetSubPathAsync()
         {
+            return await this.GetSubPathAsync(new CancellationToken());
+        }
+
+        public async Task<string> GetSubPathAsync(CancellationToken cancellationToken)
+        {
             string subPath;
 
             if (this.entityID != null)
             {
-                var pathQuery = await this.queryClient.GetObjectIDFromUserFriendlyId(this.entityMapper.GetCollectionName(), this.entityID, this.entityMapper.GetNameOfUserFriendlyID());
+                var pathQuery = await this.queryClient.GetObjectIDFromUserFriendlyId(this.entityMapper.GetCollectionName(), this.entityID, this.entityMapper.GetNameOfUserFriendlyID(),cancellationToken);
 
                 subPath = this.entityMapper.GetCollectionName() + "('" + pathQuery + "')/" + this.entityMapper.GetAttachmentCollectionName();
             }

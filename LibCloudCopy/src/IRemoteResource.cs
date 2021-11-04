@@ -1,6 +1,6 @@
 namespace CloudCopy
 {
-    using System;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public interface IRemoteResource
@@ -8,5 +8,6 @@ namespace CloudCopy
         string TypeCode { get; set; }
 
         public Task<string> GetSubPathAsync();
+        public Task<string> GetSubPathAsync(CancellationToken cancellationToken);
     }
 }
