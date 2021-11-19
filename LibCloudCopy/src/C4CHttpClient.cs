@@ -58,6 +58,10 @@ namespace CloudCopy
 
                 await target.WriteNewFile(responseMessage.Content);
             }
+            catch (TaskCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new C4CClientException("An error occured while downloading file.", ex);
@@ -84,6 +88,10 @@ namespace CloudCopy
                 responseMessage = await this.httpClient.GetAsync(sourceSubPath + query, cancellationToken);
 
                 responseMessage.EnsureSuccessStatusCode();
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -143,6 +151,14 @@ namespace CloudCopy
 
                 await responseMessage.Content.ReadAsStringAsync(cancellationToken);
             }
+            catch (TaskCanceledException)
+            {
+                throw;
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new C4CClientException("Error occured while uploading file", ex);
@@ -201,6 +217,10 @@ namespace CloudCopy
 
                 responseMessage.EnsureSuccessStatusCode();
             }
+            catch (TaskCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new C4CClientException("An error occured while requesting Object ID from User-friendly ID", ex);
@@ -252,6 +272,10 @@ namespace CloudCopy
                     responseMessage = await this.httpClient.SendAsync(request, cancellationToken);
 
                     responseMessage.EnsureSuccessStatusCode();
+                }
+                catch (TaskCanceledException)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {
