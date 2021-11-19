@@ -1,5 +1,6 @@
 namespace CloudCopy
 {
+    using System.Collections.Generic;
     using System.IO;
     using System.Xml;
 
@@ -10,6 +11,29 @@ namespace CloudCopy
         public C4CEntityMapper(string entityName)
         {
             this.entityName = entityName;
+        }
+
+        public static IEnumerable<string> getSupportedEntities()
+        {
+            var xmlDoc = C4CEntityMapper.getEntityXmlDoc();
+            var entities = new List<string>();
+
+            foreach( XmlNode node in xmlDoc.SelectNodes("/CloudCopyEntityMapping/Entity") )
+            {
+                entities.Add(node.Attributes["Name"].Value);
+            }
+
+            return entities;
+        }
+
+        protected static XmlDocument getEntityXmlDoc()
+        {
+            Stream entityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LibCloudCopy.EntityMapping.xml");
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(entityMappingStream);
+
+            return xmlDoc;
         }
 
         public string GetAttachmentCollectionName()
@@ -24,10 +48,7 @@ namespace CloudCopy
 
         public string GetNameOfUserFriendlyID()
         {
-            Stream entityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LibCloudCopy.EntityMapping.xml");
-
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(entityMappingStream);
+            var xmlDoc = C4CEntityMapper.getEntityXmlDoc();
 
             XmlNode entityNode = xmlDoc.SelectSingleNode("/CloudCopyEntityMapping/Entity[@Name='" + this.entityName + "']");
 
