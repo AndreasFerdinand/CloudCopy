@@ -117,7 +117,7 @@
                 }
             };
 
-            var configure_command = new Command("configure", "Maintain configuratoin file")
+            var configure_command = new Command("configure", "Maintain configuration file")
             {
                 new Option<string>(
                     new [] { "--Hostname", "-H" },
