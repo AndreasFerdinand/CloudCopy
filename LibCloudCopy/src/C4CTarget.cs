@@ -31,7 +31,7 @@ namespace CloudCopy
 
         public async Task<string> GetSubPathAsync()
         {
-            return await this.GetSubPathAsync(new CancellationToken());
+            return await this.GetSubPathAsync(new CancellationToken()).ConfigureAwait(false);
         }
 
         public async Task<string> GetSubPathAsync(CancellationToken cancellationToken)

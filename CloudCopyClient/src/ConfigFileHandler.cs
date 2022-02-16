@@ -10,7 +10,7 @@ namespace CloudCopy
 
     public class ConfigFileHandler : INetworkCredentialHandler
     {
-        private string filepath;
+        private readonly string filepath;
         private string username;
         private string password;
         private string hostname;
