@@ -62,6 +62,10 @@ namespace CloudCopy
             {
                 throw;
             }
+            catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new C4CClientException("An error occured while downloading file.", ex);
@@ -90,6 +94,10 @@ namespace CloudCopy
                 responseMessage.EnsureSuccessStatusCode();
             }
             catch (TaskCanceledException)
+            {
+                throw;
+            }
+            catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 throw;
             }
@@ -155,7 +163,7 @@ namespace CloudCopy
             {
                 throw;
             }
-            catch (OperationCanceledException)
+            catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 throw;
             }
@@ -221,6 +229,10 @@ namespace CloudCopy
             {
                 throw;
             }
+            catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new C4CClientException("An error occured while requesting Object ID from User-friendly ID", ex);
@@ -274,6 +286,10 @@ namespace CloudCopy
                     responseMessage.EnsureSuccessStatusCode();
                 }
                 catch (TaskCanceledException)
+                {
+                    throw;
+                }
+                catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
                     throw;
                 }
