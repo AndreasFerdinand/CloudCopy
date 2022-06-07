@@ -13,27 +13,17 @@ namespace CloudCopy
             this.entityName = entityName;
         }
 
-        public static IEnumerable<string> getSupportedEntities()
+        public static IEnumerable<string> GetSupportedEntities()
         {
-            var xmlDoc = C4CEntityMapper.getEntityXmlDoc();
+            var xmlDoc = C4CEntityMapper.GetEntityXmlDoc();
             var entities = new List<string>();
 
-            foreach( XmlNode node in xmlDoc.SelectNodes("/CloudCopyEntityMapping/Entity") )
+            foreach (XmlNode node in xmlDoc.SelectNodes("/CloudCopyEntityMapping/Entity"))
             {
                 entities.Add(node.Attributes["Name"].Value);
             }
 
             return entities;
-        }
-
-        protected static XmlDocument getEntityXmlDoc()
-        {
-            Stream entityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LibCloudCopy.EntityMapping.xml");
-
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load(entityMappingStream);
-
-            return xmlDoc;
         }
 
         public string GetAttachmentCollectionName()
@@ -48,13 +38,23 @@ namespace CloudCopy
 
         public string GetNameOfUserFriendlyID()
         {
-            var xmlDoc = C4CEntityMapper.getEntityXmlDoc();
+            var xmlDoc = C4CEntityMapper.GetEntityXmlDoc();
 
             XmlNode entityNode = xmlDoc.SelectSingleNode("/CloudCopyEntityMapping/Entity[@Name='" + this.entityName + "']");
 
             string userFriendlyIDName = entityNode.Attributes["HumanReadableIdentifier"].Value;
 
             return userFriendlyIDName;
+        }
+
+        protected static XmlDocument GetEntityXmlDoc()
+        {
+            Stream entityMappingStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("LibCloudCopy.EntityMapping.xml");
+
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.Load(entityMappingStream);
+
+            return xmlDoc;
         }
     }
 }

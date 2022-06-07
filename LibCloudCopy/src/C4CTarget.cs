@@ -40,7 +40,7 @@ namespace CloudCopy
 
             if (this.entityID != null)
             {
-                var pathQuery = await this.queryClient.GetObjectIDFromUserFriendlyId(this.entityMapper.GetCollectionName(), this.entityID, this.entityMapper.GetNameOfUserFriendlyID(),cancellationToken);
+                var pathQuery = await this.queryClient.GetObjectIDFromUserFriendlyId(this.entityMapper.GetCollectionName(), this.entityID, this.entityMapper.GetNameOfUserFriendlyID(), cancellationToken);
 
                 subPath = this.entityMapper.GetCollectionName() + "('" + pathQuery + "')/" + this.entityMapper.GetAttachmentCollectionName();
             }

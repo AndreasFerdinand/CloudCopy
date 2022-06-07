@@ -62,7 +62,7 @@ namespace CloudCopy
             {
                 throw;
             }
-            catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 throw;
             }
@@ -97,7 +97,7 @@ namespace CloudCopy
             {
                 throw;
             }
-            catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 throw;
             }
@@ -163,7 +163,7 @@ namespace CloudCopy
             {
                 throw;
             }
-            catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 throw;
             }
@@ -205,7 +205,7 @@ namespace CloudCopy
 
         public async Task<string> GetObjectIDFromUserFriendlyId(string collectionName, string userFriendlyId, string userFriendlyIDName)
         {
-            return await GetObjectIDFromUserFriendlyId(collectionName, userFriendlyId, userFriendlyIDName, new CancellationToken()).ConfigureAwait(false);
+            return await this.GetObjectIDFromUserFriendlyId(collectionName, userFriendlyId, userFriendlyIDName, new CancellationToken()).ConfigureAwait(false);
         }
 
         public async Task<string> GetObjectIDFromUserFriendlyId(string collectionName, string userFriendlyId, string userFriendlyIDName, CancellationToken cancellationToken)
@@ -229,7 +229,7 @@ namespace CloudCopy
             {
                 throw;
             }
-            catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 throw;
             }
@@ -289,7 +289,7 @@ namespace CloudCopy
                 {
                     throw;
                 }
-                catch(OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
                     throw;
                 }

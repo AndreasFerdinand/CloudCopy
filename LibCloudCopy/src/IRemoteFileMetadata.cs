@@ -17,7 +17,7 @@ namespace CloudCopy
         DateTime ChangedAt { get; set; }
 
         string CategoryCode { get; set; }
-        
+
         string User { get; set; }
 
         public void PrintMetdata();

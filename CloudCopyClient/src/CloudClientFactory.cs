@@ -2,7 +2,7 @@ namespace CloudCopy
 {
     public class CloudClientFactory : ICloudClientFactory
     {
-        public C4CHttpClient CreateCloudClient(string Hostname, string Username)
+        public C4CHttpClient CreateCloudClient(string hostname, string username)
         {
             C4CHttpClient cloudClient;
             INetworkCredentialHandler credentialHandler = null;
@@ -15,7 +15,7 @@ namespace CloudCopy
                     HOSTNAME gefüllt & USERNAME gefüllt => Hostname übernehmen        Username übernehmen       Passwort von Console
             */
 
-            if (string.IsNullOrEmpty(Hostname) && string.IsNullOrEmpty(Username))
+            if (string.IsNullOrEmpty(hostname) && string.IsNullOrEmpty(username))
             {
                 var configFileHandler = new ConfigFileHandler();
 
@@ -31,27 +31,27 @@ namespace CloudCopy
                 }
             }
 
-            if (string.IsNullOrEmpty(Hostname) && !string.IsNullOrEmpty(Username))
+            if (string.IsNullOrEmpty(hostname) && !string.IsNullOrEmpty(username))
             {
                 var configFileHandler = new ConfigFileHandler();
 
                 C4CHostName = configFileHandler.Hostname;
 
-                credentialHandler = new ConsoleCredentialHandler(Username);
+                credentialHandler = new ConsoleCredentialHandler(username);
             }
 
-            if (!string.IsNullOrEmpty(Hostname) && string.IsNullOrEmpty(Username))
+            if (!string.IsNullOrEmpty(hostname) && string.IsNullOrEmpty(username))
             {
-                C4CHostName = Hostname;
+                C4CHostName = hostname;
 
                 credentialHandler = new ConsoleCredentialHandler();
             }
 
-            if (!string.IsNullOrEmpty(Hostname) && !string.IsNullOrEmpty(Username))
+            if (!string.IsNullOrEmpty(hostname) && !string.IsNullOrEmpty(username))
             {
-                C4CHostName = Hostname;
+                C4CHostName = hostname;
 
-                credentialHandler = new ConsoleCredentialHandler(Username);
+                credentialHandler = new ConsoleCredentialHandler(username);
             }
 
             if (string.IsNullOrEmpty(C4CHostName))

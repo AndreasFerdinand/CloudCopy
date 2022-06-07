@@ -7,7 +7,6 @@ namespace CloudCopy
     public class TargetEntityInvalidFormatException : C4CClientException
     {
         private readonly string targetEntity;
-        public string TargetEntity => targetEntity;
 
         public TargetEntityInvalidFormatException()
         {
@@ -31,5 +30,7 @@ namespace CloudCopy
         protected TargetEntityInvalidFormatException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+
+        public string TargetEntity => this.targetEntity;
     }
 }

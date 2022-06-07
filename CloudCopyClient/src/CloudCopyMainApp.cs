@@ -52,6 +52,7 @@ namespace CloudCopy
                     {
                         throw new CloudCopyParametrizationException("Hostname must be provided from commandline or already maintained in the configuration file");
                     }
+
                     Console.WriteLine($"Please enter Password for user '{configFileHandler.Username}' to connect to host '{configFileHandler.Hostname}'");
 
                     configFileHandler.Password = ConsoleCredentialHandler.ReadPassword();
@@ -65,6 +66,7 @@ namespace CloudCopy
                     Console.WriteLine("WARNING: Password is saved unencrypted in configuration file!");
                     Console.ResetColor();
                 }
+
                 Console.WriteLine($"Configuration successfully written to '{configFileHandler.GetConfigFilePath()}'.");
 
                 return Task.FromResult(0);

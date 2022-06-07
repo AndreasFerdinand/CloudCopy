@@ -8,6 +8,7 @@ namespace CloudCopy
         string TypeCode { get; set; }
 
         public Task<string> GetSubPathAsync();
+
         public Task<string> GetSubPathAsync(CancellationToken cancellationToken);
     }
 }

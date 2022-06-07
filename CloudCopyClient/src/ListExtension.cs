@@ -8,7 +8,7 @@ namespace CloudCopy
 
     public static class ListExtension
     {
-        public static List<T> RemoveNotMatchingRegex<T>(this List<T> source, Func<T, string > predicate, string pattern )
+        public static List<T> RemoveNotMatchingRegex<T>(this List<T> source, Func<T, string> predicate, string pattern)
         {
             if (source == null)
             {
@@ -44,13 +44,13 @@ namespace CloudCopy
             {
                 throw new ArgumentNullException("pattern", "Pattern is null therefore is's impossible to filter.");
             }
-            
+
             var regexpattern = "^" + Regex.Escape(pattern).Replace("\\?", ".").Replace("\\*", ".*") + "$";
 
             return RemoveNotMatchingRegex(source, property, regexpattern);
         }
 
-        public static List<T> SortByProperty<T>(this List<T> source, SortByOption property )
+        public static List<T> SortByProperty<T>(this List<T> source, SortByOption property)
         {
             return SortByProperty<T>(source, property, ListSortDirection.Ascending);
         }

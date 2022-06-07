@@ -27,9 +27,4 @@ namespace CloudCopy
             return obj.FullName.GetHashCode();
         }
     }
-
-
-
-
-
 }

@@ -37,7 +37,7 @@ namespace CloudCopy
 
         public string Username { get => this.username; set => this.username = value; }
 
-        public string Password { get => this.password; set => SetPassword(value); }
+        public string Password { get => this.password; set => this.SetPassword(value); }
 
         public string Hostname { get => this.hostname; set => this.hostname = value; }
 
@@ -54,26 +54,26 @@ namespace CloudCopy
 
         public string GetConfigFilePath()
         {
-            return filepath;
+            return this.filepath;
         }
 
         public NetworkCredential GetCredentials()
         {
-            return new NetworkCredential(this.Username, GetPassword() );
+            return new NetworkCredential(this.Username, this.GetPassword());
         }
 
         public void SaveConfigurationFile()
         {
-            if (!PasswordEncrypted && IsPasswordSet() && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!this.PasswordEncrypted && this.IsPasswordSet() && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                EncryptPassword();
+                this.EncryptPassword();
             }
 
-            Directory.CreateDirectory(Path.GetDirectoryName(filepath));
+            Directory.CreateDirectory(Path.GetDirectoryName(this.filepath));
 
             XmlSerializer xmlSerializer = new XmlSerializer(this.GetType());
 
-            using (var fileToWrite = new FileStream(filepath, FileMode.Create, FileAccess.Write))
+            using (var fileToWrite = new FileStream(this.filepath, FileMode.Create, FileAccess.Write))
             {
                 xmlSerializer.Serialize(fileToWrite, this);
             }
@@ -81,35 +81,35 @@ namespace CloudCopy
 
         public bool IsPasswordSet()
         {
-            return !string.IsNullOrEmpty(password);
+            return !string.IsNullOrEmpty(this.password);
         }
 
         private string GetPassword()
         {
-            return PasswordEncrypted ? DecryptPassword() : password;
+            return this.PasswordEncrypted ? this.DecryptPassword() : this.password;
         }
 
         private void SetPassword(string password)
         {
             this.password = password;
-            passwordencrypted = false;
+            this.passwordencrypted = false;
         }
 
         private string DecryptPassword()
         {
-            byte[] salt = System.Text.Encoding.Unicode.GetBytes(Hostname);
-            byte[] decryptedPassword = ProtectedData.Unprotect(Convert.FromBase64String(password), salt, DataProtectionScope.CurrentUser);
+            byte[] salt = System.Text.Encoding.Unicode.GetBytes(this.Hostname);
+            byte[] decryptedPassword = ProtectedData.Unprotect(Convert.FromBase64String(this.password), salt, DataProtectionScope.CurrentUser);
             return System.Text.Encoding.Unicode.GetString(decryptedPassword);
         }
 
         private void EncryptPassword()
         {
-            byte[] salt = System.Text.Encoding.Unicode.GetBytes(Hostname);
-            byte[] decryptedPassword = System.Text.Encoding.Unicode.GetBytes(password);
+            byte[] salt = System.Text.Encoding.Unicode.GetBytes(this.Hostname);
+            byte[] decryptedPassword = System.Text.Encoding.Unicode.GetBytes(this.password);
             byte[] encryptedPassword = ProtectedData.Protect(decryptedPassword, salt, DataProtectionScope.CurrentUser);
 
-            password = Convert.ToBase64String(encryptedPassword);
-            PasswordEncrypted = true;
+            this.password = Convert.ToBase64String(encryptedPassword);
+            this.PasswordEncrypted = true;
         }
 
         private void LoadData()
@@ -131,9 +131,9 @@ namespace CloudCopy
                 this.password = node?.InnerText ?? null;
 
                 node = root.SelectSingleNode("PasswordEncrypted");
-                var PasswordEncryptedRaw = node?.InnerText ?? null;
+                var passwordEncryptedRaw = node?.InnerText ?? null;
 
-                Boolean.TryParse(PasswordEncryptedRaw,out passwordencrypted);
+                Boolean.TryParse(passwordEncryptedRaw, out passwordencrypted);
             }
             catch (Exception ex)
             {
