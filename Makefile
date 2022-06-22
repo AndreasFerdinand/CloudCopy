@@ -21,13 +21,13 @@ linux:
 	
 lib-windows:
 	mkdir -p releases
-	dotnet publish LibCloudCopy/src/ -c release -r $(windowstarget) --framework $(dotnetrelease) --no-self-contained /p:Version=$(version)-$(linuxtarget)
+	dotnet publish LibCloudCopy/src/ -c release -r $(windowstarget) --framework $(dotnetrelease) --no-self-contained /p:Version=$(version)-$(windowstarget)
 	cp LICENSE LibCloudCopy/src/bin/release/$(dotnetrelease)/$(windowstarget)/publish/
 	cd LibCloudCopy/src/bin/release/$(dotnetrelease)/$(windowstarget)/publish/ && zip ../../../../../../../releases/LibCloudCopy-$(version)-$(windowstarget).zip *
 
 windows:
 	mkdir -p releases
-	dotnet publish CloudCopyClient/src/ -c release -r $(windowstarget) --self-contained  --framework $(dotnetrelease) /p:Version=$(version)-$(linuxtarget)
+	dotnet publish CloudCopyClient/src/ -c release -r $(windowstarget) --self-contained  --framework $(dotnetrelease) /p:Version=$(version)-$(windowstarget)
 	cp LICENSE CloudCopyClient/src/bin/release/$(dotnetrelease)/$(windowstarget)/publish/
 	cd CloudCopyClient/src/bin/release/$(dotnetrelease)/$(windowstarget)/publish/ && zip ../../../../../../../releases/CloudCopy-$(version)-$(windowstarget).zip *
 
