@@ -77,6 +77,11 @@ namespace CloudCopy
 
                 Console.WriteLine(ex.Message);
 
+                if ( ex.InnerException != null )
+                {
+                    Console.WriteLine(ex.InnerException.Message);
+                }
+
                 Console.ResetColor();
 
                 return Task.FromResult(1);
@@ -145,6 +150,11 @@ namespace CloudCopy
 
                 Console.WriteLine(ex.Message);
 
+                if ( ex.InnerException != null )
+                {
+                    Console.WriteLine(ex.InnerException.Message);
+                }
+
                 Console.ResetColor();
 
                 ctx.ExitCode = 100;
@@ -184,6 +194,11 @@ namespace CloudCopy
                 Console.ForegroundColor = ConsoleColor.DarkRed;
 
                 Console.WriteLine(ex.Message);
+
+                if ( ex.InnerException != null )
+                {
+                    Console.WriteLine(ex.InnerException.Message);
+                }
 
                 Console.ResetColor();
 
@@ -227,6 +242,11 @@ namespace CloudCopy
                 Console.ForegroundColor = ConsoleColor.DarkRed;
 
                 Console.WriteLine(ex.Message);
+
+                if ( ex.InnerException != null )
+                {
+                    Console.WriteLine(ex.InnerException.Message);
+                }
 
                 Console.ResetColor();
 
