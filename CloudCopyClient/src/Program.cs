@@ -25,7 +25,7 @@
                     new [] { "--FilterRegex", "-r" },
                     description: "Filter files using regular expressions");
 
-            var download_Threads = new Option<uint>(
+            var download_Threads = new Option<ushort>(
                     new [] { "--Threads", "-t" },
                     getDefaultValue: () => 4,
                     description: "Threads to use for parallel download");
@@ -190,7 +190,7 @@
                                       upload_TargetEntry,
                                       upload_FilesToUpload);
 
-            download_command.SetHandler(async (string hostname, string username, string filepattern, string filterregex, uint threads, OutputFormat outputFormat, DirectoryInfo targetDir, string targetentry, InvocationContext ctx)
+            download_command.SetHandler(async (string hostname, string username, string filepattern, string filterregex, ushort threads, OutputFormat outputFormat, DirectoryInfo targetDir, string targetentry, InvocationContext ctx)
                                         => { await cloudCopyMainApp.DownloadFiles(hostname,username,filepattern,filterregex,threads,outputFormat,targetDir,targetentry, ctx); },
                                         download_Hostname,
                                         download_Username,

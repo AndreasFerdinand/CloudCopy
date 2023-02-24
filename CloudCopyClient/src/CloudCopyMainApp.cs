@@ -88,7 +88,7 @@ namespace CloudCopy
             }
         }
 
-        public async Task DownloadFiles(string Hostname, string Username, string FilterPattern, string FilterRegex, uint Threads, OutputFormat OutputFormat, DirectoryInfo TargetDir, string TargetEntry, InvocationContext ctx)
+        public async Task DownloadFiles(string Hostname, string Username, string FilterPattern, string FilterRegex, ushort Threads, OutputFormat OutputFormat, DirectoryInfo TargetDir, string TargetEntry, InvocationContext ctx)
         {
             C4CHttpClient cloudClient;
 
