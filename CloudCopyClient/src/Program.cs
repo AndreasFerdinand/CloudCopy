@@ -30,11 +30,11 @@
                     getDefaultValue: () => 4,
                     description: "Threads to use for parallel download");
 
-            var download_OutputFormat = new Option<OutputFormat>(
+/*            var download_OutputFormat = new Option<OutputFormat>(
                     new [] { "--OutputFormat", "-o" },
                     getDefaultValue: () => OutputFormat.human,
                     description: "Output Format");
-
+*/
             var download_TargetDir = new Option<DirectoryInfo>(
                     new [] { "--TargetDir", "-d" },
                     getDefaultValue: () => new DirectoryInfo("."),
@@ -52,7 +52,7 @@
                 download_FilterPattern,
                 download_FilterRegex,
                 download_Threads,
-                download_OutputFormat,
+ //               download_OutputFormat,
                 download_TargetDir,
                 download_TargetEntry,                
             };
@@ -190,14 +190,14 @@
                                       upload_TargetEntry,
                                       upload_FilesToUpload);
 
-            download_command.SetHandler(async (string hostname, string username, string filepattern, string filterregex, ushort threads, OutputFormat outputFormat, DirectoryInfo targetDir, string targetentry, InvocationContext ctx)
-                                        => { await cloudCopyMainApp.DownloadFiles(hostname,username,filepattern,filterregex,threads,outputFormat,targetDir,targetentry, ctx); },
+            download_command.SetHandler(async (string hostname, string username, string filepattern, string filterregex, ushort threads, /*OutputFormat outputFormat,*/ DirectoryInfo targetDir, string targetentry, InvocationContext ctx)
+                                        => { await cloudCopyMainApp.DownloadFiles(hostname,username,filepattern,filterregex,threads,/*outputFormat,*/targetDir,targetentry, ctx); },
                                         download_Hostname,
                                         download_Username,
                                         download_FilterPattern,
                                         download_FilterRegex,
                                         download_Threads,
-                                        download_OutputFormat,
+                                        /*download_OutputFormat,*/
                                         download_TargetDir,
                                         download_TargetEntry);
 
