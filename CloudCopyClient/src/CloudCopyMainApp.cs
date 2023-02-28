@@ -280,7 +280,7 @@ namespace CloudCopy
             {
                 foreach (var metadata in metadataList)
                 {
-                    Console.WriteLine("{0} {1} {2}", metadata.UUID.Truncate(38).PadRight(38), metadata.MimeType.Truncate(18).PadRight(18), metadata.Filename);
+                    Console.WriteLine("{0} {1} {2}", metadata.UUID.Truncate(38).PadRight(38), metadata.MimeType.Truncate(28).PadRight(28), metadata.Filename);
                 }
             }
 
