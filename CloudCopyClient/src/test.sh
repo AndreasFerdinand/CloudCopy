@@ -14,7 +14,7 @@ JSONUPLOADRESPONSE=$(CloudCopy upload ServiceRequest:\#2 $SOURCEFILE -o json)
 
 C4CFILENAME=$(jq '.[0].Filename' <<< $JSONUPLOADRESPONSE | tr -d '"')
 
-JSONDOWNLOADRESPONSE=$(CloudCopy download ServiceRequest:\#2 -p $C4CFILENAME -o json)
+JSONDOWNLOADRESPONSE=$(CloudCopy download ServiceRequest:\#2 -p $C4CFILENAME)
 
 HASHDOWNLOAD=($(md5sum $C4CFILENAME))
 
