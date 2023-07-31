@@ -1,6 +1,6 @@
 linuxtarget = linux-x64
 windowstarget = win-x64
-dotnetrelease = net5.0
+dotnetrelease = net6.0
 version = 0.5.2-beta
 
 .PHONY: all linux lib-linux windows lib-windows clean
