@@ -42,6 +42,11 @@ namespace CloudCopy
 
             XmlNode entityNode = xmlDoc.SelectSingleNode("/CloudCopyEntityMapping/Entity[@Name='" + this.entityName + "']");
 
+            if (entityNode == null)
+            {
+                throw new EntityException(this.entityName);
+            }
+
             string userFriendlyIDName = entityNode.Attributes["HumanReadableIdentifier"].Value;
 
             return userFriendlyIDName;
